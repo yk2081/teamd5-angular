@@ -30,7 +30,7 @@ export class MasterMapComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.refresh("Users");
+    this.refresh("users");
   }
 
 /*
@@ -74,10 +74,11 @@ export class MasterMapComponent implements OnInit {
     tip
       .attr('class', 'd3-tip')
       .html(function(d) {
-        let userIndex = root.search(d.id, root.data_userCountByCounty, "CountyId");
-        if (userIndex > 0) {          
-          let html = `<strong>CountyId:</strong> <span style="color:yellow">` + root.data_userCountByCounty[userIndex].CountyId + "</span><br/>"
-          html += `<strong>User Count:</strong> <span style="color:yellow">` + root.data_userCountByCounty[userIndex].Count + "</span>"
+        let userIndex = root.search(d.id, root.data_userCountByCounty, "countyid");
+        if (userIndex > 0) {
+          let html = `<strong>County : </strong> <span style="color:yellow">` + root.data_userCountByCounty[userIndex].county + "</span><br/>"
+          html += `<strong>State : </strong> <span style="color:yellow">` + root.data_userCountByCounty[userIndex].state + "</span><br/>"
+          html += `<strong>User Count : </strong> <span style="color:yellow">` + root.data_userCountByCounty[userIndex].total + "</span>"
           return html;
         }
         else {
@@ -89,11 +90,11 @@ export class MasterMapComponent implements OnInit {
 
     // calculate color threshold
     // @ts-ignore
-    let max = d3.max(this.data_userCountByCounty, function(d) { return d.Count });
+    let max = d3.max(this.data_userCountByCounty, function(d) { return d.total });
     // @ts-ignore
     let chunkSize = Math.ceil(max / 9);
     for( var i = 0; i < this.data_userCountByCounty.length; i++) {
-        this.data_userCountByCounty[i].ValueSegment = Math.floor(this.data_userCountByCounty[i].Count / chunkSize);
+        this.data_userCountByCounty[i].ValueSegment = Math.floor(this.data_userCountByCounty[i].total / chunkSize);
         if (this.data_userCountByCounty[i].ValueSegment > 8)
             this.data_userCountByCounty[i].ValueSegment = 8;
     }
@@ -110,7 +111,7 @@ export class MasterMapComponent implements OnInit {
       .enter()
       .append("path")
       .attr("fill", function(d:any) {
-        let userIndex = root.search(d.id, root.data_userCountByCounty, "CountyId");
+        let userIndex = root.search(d.id, root.data_userCountByCounty, "countyid");
         if (userIndex > 0)
           return zScale(root.data_userCountByCounty[userIndex].ValueSegment);
         else
@@ -140,11 +141,11 @@ export class MasterMapComponent implements OnInit {
   }
 
   private user() {
-    this.refresh("Users");
+    this.refresh("users");
   }
 
   private job() {
-    this.refresh("Jobs");
+    this.refresh("jobs");
   }
 
 }

@@ -17,10 +17,13 @@ export class BackendService {
     console.log(tablename);
     let query = JSON.stringify({
     	"text":
-      `SELECT \"CountyId\", COUNT(\"CountyId\") AS \"Count\"
-      FROM \"` + tablename + `"\
-      GROUP BY \"CountyId\"
-      ORDER BY \"Count\" DESC`,
+      `SELECT counties.state, counties.county, total, table1.countyid
+      FROM
+      (SELECT countyid, COUNT(countyid) AS total
+      FROM jobs
+      GROUP BY countyid) AS table1
+      LEFT JOIN counties
+      ON table1.countyid = counties.id`,
     	"values": []
     });
     return this.http.post(this.url, query);

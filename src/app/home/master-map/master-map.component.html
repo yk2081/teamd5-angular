@@ -1,5 +1,18 @@
-<div style="text-align: center;">
-  <button type="button" class="btn btn-primary" (click)="user()">Users</button>
-  <button type="button" class="btn btn-primary" (click)="job()">Jobs</button>
+<div class="card">
+  <div class="card-header">
+    
+    <div class="dropdown">
+      <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+        Select View
+      </button>
+      <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+        <button class="dropdown-item" (click)="user()">By Users</button>
+        <button class="dropdown-item" (click)="job()">By Jobs</button>
+
+      </div>
+    </div>
+  </div>
+  <div class="card-body">
   <div #chart id="chart"></div>
+  </div>
 </div>

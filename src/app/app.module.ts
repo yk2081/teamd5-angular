@@ -7,13 +7,15 @@ import { AppComponent } from './app.component';
 import { SunburstComponent } from './sunburst/sunburst.component';
 import { HomeComponent } from './home/home.component';
 import { MasterMapComponent } from './home/master-map/master-map.component';
+import { NavbarComponent } from './navbar/navbar.component';
 
 @NgModule({
   declarations: [
     AppComponent,
     SunburstComponent,
     HomeComponent,
-    MasterMapComponent
+    MasterMapComponent,
+    NavbarComponent
   ],
   imports: [
     BrowserModule,

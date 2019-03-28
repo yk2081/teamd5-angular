@@ -58,7 +58,7 @@ export class MasterMapComponent implements OnInit {
   }
 
   private load_county() {
-    return d3.json('assets/us.json');
+    return d3.json('assets/us2.json');
   }
 
   private draw_map() {
@@ -133,8 +133,12 @@ export class MasterMapComponent implements OnInit {
   private search(key, data, colname) {
       var index = -1;
       for(var i = 0; i < data.length; i ++) {
-          if (data[i][colname] == key) {
+          if (parseInt(data[i][colname]) == parseInt(key)) {
               index = i;
+              // if (key == 6037) {
+              //   console.log("us.json key : " + key);
+              //   console.log(data[i]);
+              // }
           }
       }
       return index;

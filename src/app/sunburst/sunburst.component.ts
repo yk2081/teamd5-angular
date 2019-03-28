@@ -9,7 +9,7 @@ import * as d3 from 'd3';
 })
 export class SunburstComponent implements OnInit {
 
-  @ViewChild('chart')
+  @ViewChild('sunburst')
   private chartContainer: ElementRef;
 
   @Input()
@@ -20,11 +20,6 @@ export class SunburstComponent implements OnInit {
   constructor() { }
 
   ngOnInit() {
-  }
-
-  ngOnChanges(): void {
-    if (!this.data) { return; }
-
     this.refresh();
   }
 
@@ -75,9 +70,8 @@ export class SunburstComponent implements OnInit {
   private refresh() {
     var root = this;
     // @ts-ignore
-    d3.text("assets/data_sunburst.csv", function(text: string): void {
-      var csv = d3.csvParseRows(text);
-      var json = root.buildHierarchy(csv);
+    d3.csv("assets/data_sunburst.csv", function(result) {
+      var json = root.buildHierarchy(result);
       root.createSunburst(json);
     });
   }
@@ -87,7 +81,7 @@ export class SunburstComponent implements OnInit {
     var width = 750;
     var height = 600;
     var radius = Math.min(width, height) / 2;
-
+    var element = this.chartContainer.nativeElement;
     // Mapping of step names to colors.
     var colors = {
       "home": "#5687d1",
@@ -101,7 +95,7 @@ export class SunburstComponent implements OnInit {
     // Total size of all segments; we set this later, after loading the data.
     var totalSize = 0;
 
-    var vis = d3.select("#chart").append("svg:svg")
+    var vis = d3.select(element).append("svg:svg")
         .attr("width", width)
         .attr("height", height)
         .append("svg:g")
@@ -126,7 +120,6 @@ export class SunburstComponent implements OnInit {
     var root = d3.hierarchy(json)
         .sum(function(d) { return d.size; })
         .sort(function(a, b) { return b.value - a.value; });
-    console.log(root);
 
     // For efficiency, filter nodes to keep only those large enough to see.
     var nodes = partition(root).descendants()

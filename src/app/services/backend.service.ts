@@ -20,10 +20,15 @@ export class BackendService {
       `SELECT counties.state, counties.county, total, table1.countyid
       FROM
       (SELECT countyid, COUNT(countyid) AS total
-      FROM jobs
+      FROM ` + tablename + ` 
       GROUP BY countyid) AS table1
       LEFT JOIN counties
       ON table1.countyid = counties.id`,
+      // `SELECT countyid, COUNT(countyid) AS total
+      // FROM users
+      // GROUP BY countyid`,
+      // `SELECT id AS countyid
+      // FROM counties`,
     	"values": []
     });
     return this.http.post(this.url, query);

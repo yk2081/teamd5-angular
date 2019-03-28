@@ -7,9 +7,14 @@
     border-radius: 20px;
 }
 
-.card-body {
+.card-body-blue {
     background-color: #74B9FF;
     text-align: center;
+}
+
+.card-body-white {
+  text-align: center;
+  /* white bg by default */
 }
 
 #mapViews label {

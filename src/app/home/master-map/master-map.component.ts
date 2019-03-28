@@ -24,6 +24,7 @@ export class MasterMapComponent implements OnInit {
 
   private data_userCountByCounty$;
   private data_userCountByCounty;
+  public loading:boolean = true;
 
   constructor(private backend: BackendService) {
 
@@ -33,6 +34,9 @@ export class MasterMapComponent implements OnInit {
     this.refresh("users");
   }
 
+  toggleLoading() {
+    this.loading = !this.loading;
+  }
 /*
   ngOnChanges(): void {
     if (!this.data) { return; }
@@ -42,7 +46,7 @@ export class MasterMapComponent implements OnInit {
 */
   private refresh(tablename) {
 
-    d3.select('svg').remove();
+    d3.select('.svg-container').remove();
 
     this.data_userCountByCounty$ = this.backend.getUserCountByCounty(tablename);
 
@@ -54,6 +58,7 @@ export class MasterMapComponent implements OnInit {
         root.data_userCountByCounty = values[1];
 
         root.draw_map();
+        root.toggleLoading();
     })
   }
 
@@ -65,9 +70,14 @@ export class MasterMapComponent implements OnInit {
     const root = this;
     const element = this.chartContainer.nativeElement;
 
-    const svg = d3.select(element).append("svg")
-      .attr("width", 1200)
-      .attr("height", 800);
+    // this allows our svg to be responsive instead of hardcoding it.
+    const svg = d3.select(element)
+      .append("div")
+      .classed("svg-container", true)
+      .append("svg")
+      .attr("preserveAspectRatio", "xMinYMin meet")
+      .attr("viewBox", "0 0 1000 800")
+      .classed("svg-content-responsive", true);
 
     // tooltips
     const tip = d3Tip();
@@ -75,14 +85,14 @@ export class MasterMapComponent implements OnInit {
       .attr('class', 'd3-tip')
       .html(function(d) {
         let userIndex = root.search(d.id, root.data_userCountByCounty, "countyid");
-        if (userIndex > 0) {
+        if (userIndex !== -1) {
           let html = `<strong>County : </strong> <span style="color:yellow">` + root.data_userCountByCounty[userIndex].county + "</span><br/>"
           html += `<strong>State : </strong> <span style="color:yellow">` + root.data_userCountByCounty[userIndex].state + "</span><br/>"
           html += `<strong>User Count : </strong> <span style="color:yellow">` + root.data_userCountByCounty[userIndex].total + "</span>"
           return html;
         }
         else {
-          return "No user found in this county";
+          return "🤞 We don't have data on this county yet.";
         }
 
       })
@@ -112,7 +122,7 @@ export class MasterMapComponent implements OnInit {
       .append("path")
       .attr("fill", function(d:any) {
         let userIndex = root.search(d.id, root.data_userCountByCounty, "countyid");
-        if (userIndex > 0)
+        if (userIndex !== -1)
           return zScale(root.data_userCountByCounty[userIndex].ValueSegment);
         else
           return "white";
@@ -145,10 +155,14 @@ export class MasterMapComponent implements OnInit {
   }
 
   private user() {
+    console.debug('inside users');
+    this.toggleLoading();
     this.refresh("users");
   }
 
   private job() {
+    console.debug('inside jobs');
+    this.toggleLoading();
     this.refresh("jobs");
   }
 

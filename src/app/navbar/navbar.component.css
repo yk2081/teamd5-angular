@@ -1,0 +1,17 @@
+.navbar {
+  padding-left: 5em;
+  padding-right: 5em;
+}
+
+.navbar-nav {
+  margin-left: auto;
+  padding-right: 15em;
+}
+
+.nav-link:focus {
+  font-weight: 700;
+}
+
+.nav-link:hover {
+  color: #10A881 !important;
+}

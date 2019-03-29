@@ -81,16 +81,16 @@ export class SunburstComponent implements OnInit {
 
     this.arc = d3
       .arc()
-      .startAngle(d => {
+      .startAngle((d: any) => {
         return d.x0;
       })
-      .endAngle(d => {
+      .endAngle((d: any) => {
         return d.x1;
       })
-      .innerRadius(d => {
+      .innerRadius((d: any) => {
         return Math.sqrt(d.y0);
       })
-      .outerRadius(d => {
+      .outerRadius((d: any) => {
         return Math.sqrt(d.y1);
       });
 
@@ -248,7 +248,7 @@ export class SunburstComponent implements OnInit {
     let trail = d3
       .select('#trail')
       .selectAll('g')
-      .data(nodeArray, (d) => {
+      .data(nodeArray, (d: any) => {
         return d.data.name + d.depth;
       });
 
@@ -261,7 +261,7 @@ export class SunburstComponent implements OnInit {
     entering
       .append('svg:polygon')
       .attr('points', this.breadcrumbPoints.bind(that))
-      .style('fill', (d) => {
+      .style('fill', (d: any) => {
         return that.colors[d.data.name];
       });
 
@@ -271,7 +271,7 @@ export class SunburstComponent implements OnInit {
       .attr('y', this.b.h / 2)
       .attr('dy', '0.35em')
       .attr('text-anchor', 'middle')
-      .text((d) => {
+      .text((d: any) => {
         return d.data.name
       });
 

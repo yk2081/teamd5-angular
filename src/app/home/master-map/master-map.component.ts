@@ -75,7 +75,7 @@ export class MasterMapComponent implements OnInit {
       .attr('class', 'd3-tip')
       .html(function(d) {
         let userIndex = root.search(d.id, root.data_userCountByCounty, "countyid");
-        if (userIndex > 0) {
+        if (userIndex >= 0) {
           let html = `<strong>County : </strong> <span style="color:yellow">` + root.data_userCountByCounty[userIndex].county + "</span><br/>"
           html += `<strong>State : </strong> <span style="color:yellow">` + root.data_userCountByCounty[userIndex].state + "</span><br/>"
           html += `<strong>User Count : </strong> <span style="color:yellow">` + root.data_userCountByCounty[userIndex].total + "</span>"
@@ -112,7 +112,7 @@ export class MasterMapComponent implements OnInit {
       .append("path")
       .attr("fill", function(d:any) {
         let userIndex = root.search(d.id, root.data_userCountByCounty, "countyid");
-        if (userIndex > 0)
+        if (userIndex >= 0)
           return zScale(root.data_userCountByCounty[userIndex].ValueSegment);
         else
           return "white";
@@ -135,10 +135,11 @@ export class MasterMapComponent implements OnInit {
       for(var i = 0; i < data.length; i ++) {
           if (parseInt(data[i][colname]) == parseInt(key)) {
               index = i;
-              // if (key == 6037) {
-              //   console.log("us.json key : " + key);
-              //   console.log(data[i]);
-              // }
+              if (key == 6037 || key == 6073) {
+                console.log("us.json key : " + key);
+                console.log(data[i]);
+                console.log(index);
+              }
           }
       }
       return index;

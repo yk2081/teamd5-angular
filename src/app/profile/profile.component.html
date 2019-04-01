@@ -1,0 +1,35 @@
+<div class="card">
+  <div class="card-header bg-primary">
+    User Profile
+  </div>
+  <div class="card-body">
+    <h5 class="card-title">Enter your information to plan your career.</h5>
+    <form>
+      <div class="form-row">
+        <div class="form-group col-md-6">
+          <label>Name</label>
+          <input type="text" class="form-control" placeholder="Name"
+            [(ngModel)]="user.name" name="name">
+        </div>
+        <div class="form-group col-md-6">
+          <label>Major</label>
+          <input type="text" class="form-control" placeholder="Major"
+            [(ngModel)]="user.major" name="major">
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group col-md-6">
+          <label>Managed Others</label>
+          <input type="text" class="form-control" placeholder="Managed Others"
+            [(ngModel)]="user.managed_others" name="managed_others">
+        </div>
+        <div class="form-group col-md-6">
+          <label>Experience in Years</label>
+          <input type="number" class="form-control" placeholder="Expeience in Years"
+            [(ngModel)]="user.experience_in_years" name="experience_in_years">
+        </div>
+      </div>
+      <button type="button" class="btn btn-primary" (click)="updateUser()">Update</button>
+    </form>
+  </div>
+</div>

@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import {BackendService} from '../services/backend.service';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-profile',
@@ -10,7 +11,8 @@ export class ProfileComponent implements OnInit {
 
   private user;
 
-  constructor(private backend: BackendService) {
+  constructor(private backend: BackendService,
+    private router: Router) {
 
   }
 
@@ -20,6 +22,7 @@ export class ProfileComponent implements OnInit {
 
   private updateUser() {
     this.backend.updateUser(this.user);
+    this.router.navigate(["career"]);
   }
 
 }

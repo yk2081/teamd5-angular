@@ -10,6 +10,7 @@ import { HomeComponent } from './home/home.component';
 import { MasterMapComponent } from './home/master-map/master-map.component';
 import { NavbarComponent } from './navbar/navbar.component';
 import { ProfileComponent } from './profile/profile.component';
+import { CareerComponent } from './career/career.component';
 
 @NgModule({
   declarations: [
@@ -18,7 +19,8 @@ import { ProfileComponent } from './profile/profile.component';
     HomeComponent,
     MasterMapComponent,
     NavbarComponent,
-    ProfileComponent
+    ProfileComponent,
+    CareerComponent
   ],
   imports: [
     BrowserModule,

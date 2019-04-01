@@ -7,7 +7,8 @@ import {HttpClient} from'@angular/common/http';
 })
 export class BackendService {
 
-  private url = "https://869p2uscle.execute-api.us-east-1.amazonaws.com/staging";
+  private url_query = "https://869p2uscle.execute-api.us-east-1.amazonaws.com/staging";
+  private url_recommend = "http://teamd5-project-env.h8caqgumtp.us-east-1.elasticbeanstalk.com/api/job/recommendation";
   private user:any = new BehaviorSubject({
     name: '',
     major: '',
@@ -43,6 +44,13 @@ export class BackendService {
       // FROM counties`,
     	"values": []
     });
-    return this.http.post(this.url, query);
+    return this.http.post(this.url_query, query);
+  }
+
+  public getRecommendations(this) {
+    let query = JSON.stringify({
+      "name": "name"
+    });
+    return this.http.post(this.url_recommend, query);
   }
 }

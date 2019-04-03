@@ -94,7 +94,7 @@ export class SunburstComponent implements OnInit {
         return Math.sqrt(d.y1);
       });
 
-    d3.text('assets/data_sunburst.csv').then(text => {
+    d3.text('assets/customer-service.csv').then(text => {
       const csv = d3.csvParseRows(text);
       const json = this.buildHierarchy(csv);
 
@@ -104,7 +104,7 @@ export class SunburstComponent implements OnInit {
 
   // Main function to draw and set up the visualization, once we have the data.
   private createVisualization(json) {
-    let that = this;
+    const that = this;
 
     // Basic setup of page elements.
     this.initializeBreadcrumbTrail();
@@ -201,7 +201,7 @@ export class SunburstComponent implements OnInit {
       .transition()
       .duration(1000)
       .style('opacity', 1)
-      .on('end', function() {
+      .on('end', () => {
         // d3.select(this).on('mouseover', that.mouseover);
       });
 
@@ -226,7 +226,7 @@ export class SunburstComponent implements OnInit {
 
   // Generate a string that describes the points of a breadcrumb polygon.
   private breadcrumbPoints(d, i) {
-    let points = [];
+    const points = [];
     points.push('0,0');
     points.push(this.b.w + ',0');
     points.push(this.b.w + this.b.t + ',' + this.b.h / 2);
@@ -245,7 +245,7 @@ export class SunburstComponent implements OnInit {
   private updateBreadcrumbs(nodeArray, percentageString) {
     const that = this;
     // Data join; key function combines name and depth (= position in sequence).
-    let trail = d3
+    const trail = d3
       .select('#trail')
       .selectAll('g')
       .data(nodeArray, (d: any) => {
@@ -272,7 +272,7 @@ export class SunburstComponent implements OnInit {
       .attr('dy', '0.35em')
       .attr('text-anchor', 'middle')
       .text((d: any) => {
-        return d.data.name
+        return d.data.name;
       });
 
     // Merge enter and update selections; set position for all nodes.
@@ -353,29 +353,31 @@ export class SunburstComponent implements OnInit {
   private buildHierarchy(csv) {
     const root = { name: 'root', children: [] };
 
-    for (var i = 0; i < csv.length; i++) {
-      let sequence = csv[i][0];
-      let size = +csv[i][1];
+    // tslint:disable-next-line:prefer-for-of
+    for (let i = 0; i < csv.length; i++) {
+      const sequence = csv[i][0];
+      const size = +csv[i][1];
 
       if (isNaN(size)) {
         // e.g. if this is a header row
         continue;
       }
 
-      let parts = sequence.split('-');
+      const parts = sequence.split('-');
       let currentNode = root;
 
-      for (var j = 0; j < parts.length; j++) {
-        let children = currentNode['children'];
-        let nodeName = parts[j];
+      for (let j = 0; j < parts.length; j++) {
+        const children = currentNode.children;
+        const nodeName = parts[j];
         let childNode;
 
         if (j + 1 < parts.length) {
           // Not yet at the end of the sequence; move down the tree.
           let foundChild = false;
 
-          for (var k = 0; k < children.length; k++) {
-            if (children[k]['name'] == nodeName) {
+          // tslint:disable-next-line:prefer-for-of
+          for (let k = 0; k < children.length; k++) {
+            if (children[k].name === nodeName) {
               childNode = children[k];
               foundChild = true;
               break;
@@ -391,7 +393,7 @@ export class SunburstComponent implements OnInit {
           currentNode = childNode;
         } else {
           // Reached the end of the sequence; create a leaf node.
-          childNode = { name: nodeName, size: size };
+          childNode = { name: nodeName, size };
           children.push(childNode);
         }
       }

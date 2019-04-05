@@ -1,3 +1,29 @@
-<p>
-  {{user.name}}
-</p>
+<div class="accordion" id="recommendlist">
+  <div class="card">
+    <div class="card-header bg-primary">
+      Career Planning
+    </div>
+    <div class="card-body">
+      <h5 class="card-title">{{user.name}}, Major : {{user.major_input}}</h5>
+
+      <div class="accordion">
+        <div class="card" *ngFor="let result of results; let i = index">
+          <div class="card-header" [id]="'heading' + i.toString()">
+            <h2>
+              <button class="btn btn-link collapsed" type="button" data-toggle="collapse" [attr.data-target]="'#collapse' + i.toString()" aria-expanded="false" [attr.aria-controls]="'collapse' + i.toString()">
+                {{result.Title}}
+              </button>
+              <span class="badge badge-pill badge-warning" style="font-size: 12px; vertical-align:middle">{{result.Score}}</span>
+            </h2>
+          </div>
+          <div [id]="'collapse' + i.toString()" class="collapse" [attr.aria-labelledby]="'heading' + i.toString()" data-parent="#recommendlist">
+            <div class="card-body">
+              {{result.Description}}
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

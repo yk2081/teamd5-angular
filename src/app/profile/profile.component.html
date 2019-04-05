@@ -4,6 +4,13 @@
   </div>
   <div class="card-body">
     <h5 class="card-title">Enter your information to plan your career.</h5>
+    <br/>
+
+    <button type="button" style="margin-right:10px;" class="btn btn-primary" (click)=sample(1)>Sample 1</button>
+    <button type="button" style="margin-right:10px;" class="btn btn-primary" (click)=sample(2)>Sample 2</button>
+    <button type="button" style="margin-right:10px;" class="btn btn-primary" (click)=sample(3)> Sample 3</button>
+
+    <br/><br/>
     <form>
       <div class="form-row">
         <div class="form-group col-md-6">
@@ -11,22 +18,29 @@
           <input type="text" class="form-control" placeholder="Name"
             [(ngModel)]="user.name" name="name">
         </div>
+      </div>
+      <div class="form-row">
         <div class="form-group col-md-6">
           <label>Major</label>
           <input type="text" class="form-control" placeholder="Major"
-            [(ngModel)]="user.major" name="major">
+            [(ngModel)]="user.major_input" name="major_input">
+        </div>
+        <div class="form-group col-md-6">
+          <label>Degree Type</label>
+          <input type="text" class="form-control" placeholder="Degree Type"
+            [(ngModel)]="user.degree_type_input" name="degree_type_input">
         </div>
       </div>
       <div class="form-row">
         <div class="form-group col-md-6">
           <label>Managed Others</label>
           <input type="text" class="form-control" placeholder="Managed Others"
-            [(ngModel)]="user.managed_others" name="managed_others">
+            [(ngModel)]="user.managed_others_input" name="managed_others_input">
         </div>
         <div class="form-group col-md-6">
           <label>Experience in Years</label>
           <input type="number" class="form-control" placeholder="Expeience in Years"
-            [(ngModel)]="user.experience_in_years" name="experience_in_years">
+            [(ngModel)]="user.years_exp_input" name="years_exp_input">
         </div>
       </div>
       <button type="button" class="btn btn-primary" (click)="updateUser()">Update</button>

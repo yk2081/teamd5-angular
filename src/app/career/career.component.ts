@@ -9,6 +9,7 @@ import {BackendService} from '../services/backend.service';
 export class CareerComponent implements OnInit {
 
   private user;
+  private results = [];
 
   constructor(private backend: BackendService) { }
 
@@ -16,7 +17,9 @@ export class CareerComponent implements OnInit {
     this.backend.$user.subscribe(user => this.user = user);
 
     this.backend.getRecommendations().toPromise().then(response => {
-      console.log(response);
+      for(let i = 0; 50 > i; i++) {
+        this.results.push(response[i]);
+      }
     }).catch(err => {
       console.log(err);
     })

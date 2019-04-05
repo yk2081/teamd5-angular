@@ -22,7 +22,7 @@ export class SunburstComponent implements OnInit {
   @ViewChild('sunburst')
   private chartContainer: ElementRef;
 
-  private data: any[];
+  private data;
   margin = { top: 20, right: 20, bottom: 30, left: 40 };
   totalUniqueJobs = 0;
   uniqueJobs = null;

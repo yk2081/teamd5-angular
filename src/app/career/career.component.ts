@@ -17,7 +17,8 @@ export class CareerComponent implements OnInit {
     this.backend.$user.subscribe(user => this.user = user);
 
     this.backend.getRecommendations().toPromise().then(response => {
-      for(let i = 0; 50 > i; i++) {
+      let k = 50;
+      for(let i = 0; k > i; i++) {
         this.results.push(response[i]);
       }
     }).catch(err => {

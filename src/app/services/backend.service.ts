@@ -49,8 +49,12 @@ export class BackendService {
   }
 
   public getRecommendations(this) {
-    console.log(this.user);
     let query = JSON.stringify(this.user.value);
     return this.http.post(this.url_recommend, query);
+  }
+
+  public getPaths(this) {
+    let query = JSON.stringify({job_title: "SOFTWARE DEVELOPER"});
+    return this.http.post(this.url_jobpath, query);
   }
 }

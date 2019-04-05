@@ -9,6 +9,7 @@ import {
 } from '@angular/core';
 
 import * as d3 from 'd3';
+const randomColor = require('randomColor');
 
 @Component({
   selector: 'app-sunburst',
@@ -23,6 +24,8 @@ export class SunburstComponent implements OnInit {
   @Input()
   data: any[];
   margin = { top: 20, right: 20, bottom: 30, left: 40 };
+  totalUniqueJobs = 0;
+  uniqueJobs = null;
 
   // Dimensions of sunburst.
   width = 750;
@@ -31,21 +34,15 @@ export class SunburstComponent implements OnInit {
 
   // Breadcrumb dimensions: width, height, spacing, width of tip/tail.
   b = {
-    w: 75,
-    h: 30,
+    w: 200,
+    h: 40,
     s: 3,
-    t: 10
+    t: 0
   };
 
   // Mapping of step names to colors.
   colors = {
-    home: '#5687d1',
-    product: '#7b615c',
-    search: '#de783b',
-    account: '#6ab975',
-    other: '#a173d1',
-    end: '#bbbbbb',
-    root: '#bbbbb'
+    default: '#FFFF'
   };
 
   // Total size of all segments; we set this later, after loading the data.
@@ -94,7 +91,7 @@ export class SunburstComponent implements OnInit {
         return Math.sqrt(d.y1);
       });
 
-    d3.text('assets/data_sunburst.csv').then(text => {
+    d3.text('assets/customer-service.csv').then(text => {
       const csv = d3.csvParseRows(text);
       const json = this.buildHierarchy(csv);
 
@@ -104,8 +101,17 @@ export class SunburstComponent implements OnInit {
 
   // Main function to draw and set up the visualization, once we have the data.
   private createVisualization(json) {
-    let that = this;
+    const that = this;
 
+    // Create colors
+    const colorArray = randomColor({ count: this.totalUniqueJobs, luminosity: 'dark' });
+    console.log('color ', colorArray);
+    console.log('unique', this.uniqueJobs);
+    this.uniqueJobs.forEach((job, indx, arr) => {
+      // console.log(`job ${job} indx ${indx}`);
+      that.colors[job] = colorArray[indx];
+    });
+    console.log('colors ', that.colors);
     // Basic setup of page elements.
     this.initializeBreadcrumbTrail();
     this.drawLegend();
@@ -162,14 +168,28 @@ export class SunburstComponent implements OnInit {
 
   // Fade all but the current sequence, and show it in the breadcrumb trail.
   private mouseover(d) {
-    const percentage = parseFloat(((100 * d.value) / this.totalSize).toPrecision(3));
-    let percentageString = percentage + '%';
+    console.log('mouse over ', d.data.name);
+    // check if we are at the inner circle
+    let percentageString = '';
+    let explanationString = '';
 
-    if (percentage < 0.1) {
-      percentageString = '< 0.1%';
+    if (d.depth === 1) {
+      percentageString = '100%';
+      explanationString = ` of users started as ${d.data.name}.`;
+    } else {
+      const percentage = parseFloat(((100 * d.value) / this.totalSize).toPrecision(3));
+      percentageString = percentage + '%';
+
+      if (percentage < 0.1) {
+        percentageString = '< 0.1%';
+      }
+
+      explanationString = ` of users end up as ${d.data.name}.`;
     }
 
     d3.select('#percentage').text(percentageString);
+    d3.select('#explanationText').text(explanationString);
+
     d3.select('#explanation').style('visibility', '');
 
     const sequenceArray = d.ancestors().reverse();
@@ -190,7 +210,7 @@ export class SunburstComponent implements OnInit {
   // Restore everything to full opacity when moving off the visualization.
   private mouseleave(d) {
     const that = this;
-    // Hide the breadcrumb trail
+    // Hide the breadcrumb trail TODO: enable this again
     d3.select('#trail').style('visibility', 'hidden');
 
     // Deactivate all segments during transition.
@@ -201,7 +221,7 @@ export class SunburstComponent implements OnInit {
       .transition()
       .duration(1000)
       .style('opacity', 1)
-      .on('end', function() {
+      .on('end', () => {
         // d3.select(this).on('mouseover', that.mouseover);
       });
 
@@ -213,8 +233,8 @@ export class SunburstComponent implements OnInit {
     const trail = d3
       .select('#sequence')
       .append('svg:svg')
-      .attr('width', this.width)
-      .attr('height', 50)
+      .attr('width', 200)
+      .attr('height', this.width)
       .attr('id', 'trail');
 
     // Add the label at the end, for the percentage.
@@ -226,7 +246,7 @@ export class SunburstComponent implements OnInit {
 
   // Generate a string that describes the points of a breadcrumb polygon.
   private breadcrumbPoints(d, i) {
-    let points = [];
+    const points = [];
     points.push('0,0');
     points.push(this.b.w + ',0');
     points.push(this.b.w + this.b.t + ',' + this.b.h / 2);
@@ -245,7 +265,7 @@ export class SunburstComponent implements OnInit {
   private updateBreadcrumbs(nodeArray, percentageString) {
     const that = this;
     // Data join; key function combines name and depth (= position in sequence).
-    let trail = d3
+    const trail = d3
       .select('#trail')
       .selectAll('g')
       .data(nodeArray, (d: any) => {
@@ -267,17 +287,21 @@ export class SunburstComponent implements OnInit {
 
     entering
       .append('svg:text')
-      .attr('x', (this.b.w + this.b.t) / 2)
+      .attr('x', 10) // (this.b.w + this.b.t) / 2)
       .attr('y', this.b.h / 2)
       .attr('dy', '0.35em')
-      .attr('text-anchor', 'middle')
+      .attr('text-anchor', 'right')
       .text((d: any) => {
-        return d.data.name
+        if (d.data.name.length > 32) {
+          d.data.name = d.data.name.substring(0, 32).trim() + '...';
+        }
+        return d.data.name;
       });
 
     // Merge enter and update selections; set position for all nodes.
     entering.merge(trail).attr('transform', (d, i) => {
-      return 'translate(' + i * (this.b.w + this.b.s) + ', 0)';
+      // return 'translate(' + i * (this.b.w + this.b.s) + ', 0)';
+      return 'translate(10, ' + i * (this.b.h + this.b.s) + ')';
     });
 
     // Now move and update the percentage at the end.
@@ -351,31 +375,43 @@ export class SunburstComponent implements OnInit {
   // root to leaf, separated by hyphens. The second column is a count of how
   // often that sequence occurred.
   private buildHierarchy(csv) {
+    const uniqueJobs = new Set();
+    // let totalJobs = 0;
+
     const root = { name: 'root', children: [] };
 
-    for (var i = 0; i < csv.length; i++) {
-      let sequence = csv[i][0];
-      let size = +csv[i][1];
+    // tslint:disable-next-line:prefer-for-of
+    for (let i = 0; i < csv.length; i++) {
+      const sequence = csv[i][0];
+      const size = +csv[i][1];
 
       if (isNaN(size)) {
         // e.g. if this is a header row
         continue;
       }
 
-      let parts = sequence.split('-');
+      const parts = sequence.split('-');
       let currentNode = root;
 
-      for (var j = 0; j < parts.length; j++) {
-        let children = currentNode['children'];
-        let nodeName = parts[j];
-        let childNode;
+      for (let j = 0; j < parts.length; j++) {
+        const children = currentNode.children;
+        const nodeName = parts[j]
+          .toLowerCase()
+          .split(' ')
+          .map((s) => s.charAt(0).toUpperCase() + s.substring(1))
+          .join(' ');
 
+        // Add in job to set
+        uniqueJobs.add(nodeName);
+
+        let childNode;
         if (j + 1 < parts.length) {
           // Not yet at the end of the sequence; move down the tree.
           let foundChild = false;
 
-          for (var k = 0; k < children.length; k++) {
-            if (children[k]['name'] == nodeName) {
+          // tslint:disable-next-line:prefer-for-of
+          for (let k = 0; k < children.length; k++) {
+            if (children[k].name === nodeName) {
               childNode = children[k];
               foundChild = true;
               break;
@@ -391,11 +427,16 @@ export class SunburstComponent implements OnInit {
           currentNode = childNode;
         } else {
           // Reached the end of the sequence; create a leaf node.
-          childNode = { name: nodeName, size: size };
+          childNode = { name: nodeName, size };
           children.push(childNode);
         }
       }
     }
+
+    // console.log('Found unique jobs', uniqueJobs.size);
+    // console.log('Total jobs', totalJobs);
+    this.totalUniqueJobs = uniqueJobs.size;
+    this.uniqueJobs = Array.from(uniqueJobs);
 
     return root;
   }

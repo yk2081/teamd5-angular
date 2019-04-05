@@ -1,73 +1,69 @@
 .bar {
-    fill: steelblue;
+  fill: steelblue;
 }
 
 .bar:hover {
-    fill: brown;
+  fill: brown;
 }
 
 .axis--x path {
-    display: none;
+  display: none;
 }
 
 #sidebar {
-    float: right;
-    width: 100px;
-  }
-  
-  #sequence {
-    width: 600px;
-    height: 70px;
-  }
-  
-  #legend {
-    padding-right: 2em;
-    right: 0px;
-    top: 2.0em;
-    margin: auto;
-    position: absolute;
-  }
-  
-  #sequence text, #legend text {
-    font-weight: 200;
-    fill: #fff;
-  }
-  
-  #chart {
-    position: relative;
-  }
-  
-  #chart path {
-    stroke: #fff;
-  }
-  
-  /* TODO: This is hacky. fix it once we have better data */
-  @media (max-width: 1024px) {
-    #explanation {
-        position: absolute;
-        top: 39%;
-        left: 26%;
-        width: 10em;
-        text-align: center;
-        color: #666;
-        z-index: 100;
-      }
-      
-  }
+  float: right;
+  width: 100px;
+}
 
-  @media (min-width: 1024px) {
-    #explanation {
-        position: absolute;
-        top: 39%;
-        left: 27%;
-        width: 15em;
-        text-align: center;
-        color: #666;
-        z-index: 100;
-      }
-      
-  }
+#sequence {
+  /*display: block;
+  height: 70px;*/
+  display: block;
+  /* width: 15em; */
+  position: absolute;
+  right: 0px;
+  padding-right: 1em;
+  padding-top: 1em;
+}
 
-  #percentage {
-    font-size: 2em;
-  }
+#legend {
+  padding-right: 2em;
+  right: 0px;
+  top: 2em;
+  margin: auto;
+  position: absolute;
+}
+
+#sequence text,
+#legend text {
+  font-weight: 200;
+  font-size: .75em;
+  fill: #fff;
+}
+
+#chart {
+  position: relative;
+}
+
+#chart path {
+  stroke: #fff;
+}
+
+/* TODO: This is hacky. fix it once we have better data */
+@media (max-width: 1024px) {}
+
+#explanation {
+  top: .25em;
+  padding-top: .5em;
+  padding-left: 1em;
+  display:block;
+  text-align: left;
+  color: #666;
+  z-index: 100;
+}
+
+#percentage {
+  font-size: 1.2em;
+  font-weight: 600;
+  color: green;
+}

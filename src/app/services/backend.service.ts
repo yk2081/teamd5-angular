@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import {Observable, BehaviorSubject} from 'rxjs';
-import {HttpClient} from'@angular/common/http';
+import {HttpClient} from '@angular/common/http';
 
 @Injectable({
   providedIn: 'root'
@@ -15,22 +15,20 @@ export class BackendService {
     major_input: '',
     degree_type_input: '',
     managed_others_input: '',
-    years_exp_input:0,
+    years_exp_input: 0,
     k: 50
   });
   public $user = this.user.asObservable();
 
-  constructor(private http: HttpClient) {
-
-  }
+  constructor(private http: HttpClient) {}
 
   public updateUser(user) {
     this.user.next(user);
   }
 
   public getUserCountByCounty(this, tablename) {
-    let query = JSON.stringify({
-    	"text":
+    const query = JSON.stringify({
+    	text:
       `SELECT counties.state, counties.county, total, table1.countyid
       FROM
       (SELECT countyid, COUNT(countyid) AS total
@@ -43,18 +41,23 @@ export class BackendService {
       // GROUP BY countyid`,
       // `SELECT id AS countyid
       // FROM counties`,
-    	"values": []
+      values: []
     });
     return this.http.post(this.url_query, query);
   }
 
   public getRecommendations(this) {
-    let query = JSON.stringify(this.user.value);
+    const query = JSON.stringify(this.user.value);
     return this.http.post(this.url_recommend, query);
   }
 
-  public getPaths(this) {
-    let query = JSON.stringify({job_title: "SOFTWARE DEVELOPER"});
-    return this.http.post(this.url_jobpath, query);
+  public getPaths(this, jobTitle) {
+    const query = JSON.stringify({job_title: jobTitle});
+    return this.http.post(this.url_jobpath, query, {
+      dataType: 'json',
+      headers: {
+        'Content-Type': 'application/json'
+      } // added these options because it is required to avoid 500 server errors.
+    });
   }
 }

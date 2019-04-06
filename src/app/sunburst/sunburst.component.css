@@ -24,6 +24,7 @@
   right: 0px;
   padding-right: 1em;
   padding-top: 1em;
+  visibility: hidden;
 }
 
 #sequence p {
@@ -78,7 +79,6 @@
 #percentage {
   font-size: 1.2em;
   font-weight: 600;
-  color: green;
 }
 
 #jobTitle {

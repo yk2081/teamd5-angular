@@ -18,11 +18,13 @@ import * as randomColor from 'randomcolor';
   templateUrl: './sunburst.component.html',
   styleUrls: ['./sunburst.component.css']
 })
+
 export class SunburstComponent implements OnInit {
   @ViewChild('sunburst')
-  private chartContainer: ElementRef;
 
+  private chartContainer: ElementRef;
   private data;
+
   margin = { top: 20, right: 20, bottom: 30, left: 40 };
   totalUniqueJobs = 0;
   uniqueJobs = null;
@@ -53,18 +55,21 @@ export class SunburstComponent implements OnInit {
   arc;
 
   constructor(private backend: BackendService) {}
+
   ngOnInit() {
     this.refresh();
   }
 
   private refresh() {
     // getting Data
-    this.backend.getPaths().toPromise().then(response => {
+    // pass what is passed is selected.
+    this.backend.getPaths('SOFTWARE DEVELOPER').toPromise().then(response => {
       this.data = JSON.stringify(response, null, 2);
+      console.log('api response', this.data)
 
     }).catch(err => {
       console.log(err);
-    })
+    });
 
     const root = this;
 
@@ -102,7 +107,7 @@ export class SunburstComponent implements OnInit {
     d3.text('assets/customer-service.csv').then(text => {
       const csv = d3.csvParseRows(text);
       const json = this.buildHierarchy(csv);
-
+      console.log('json ', json)
       this.createVisualization(json);
     });
   }
@@ -118,7 +123,6 @@ export class SunburstComponent implements OnInit {
       that.colors[job] = colorArray[indx];
     });
 
-    console.log('colors ', that.colors);
     // Basic setup of page elements.
     this.initializeBreadcrumbTrail();
     this.drawLegend();
@@ -180,8 +184,9 @@ export class SunburstComponent implements OnInit {
 
   // Fade all but the current sequence, and show it in the breadcrumb trail.
   private mouseover(d) {
-    console.log('mouse over ', d);
     // check if we are at the inner circle
+    d3.select('#sequence').style('visibility', 'visible');
+
     let percentageString = '';
     let explanationString = '';
 
@@ -208,7 +213,6 @@ export class SunburstComponent implements OnInit {
 
     const sequenceArray = d.ancestors().reverse();
     sequenceArray.shift(); // remove root node from the array
-    // console.log('sa', sequenceArray);
     this.updateBreadcrumbs(sequenceArray, percentageString);
 
     // Fade all the segments.
@@ -225,22 +229,18 @@ export class SunburstComponent implements OnInit {
   // Restore everything to full opacity when moving off the visualization.
   private mouseleave(d) {
     const that = this;
-    // Hide the breadcrumb trail TODO: enable this again
-    // d3.select('#trail').style('visibility', 'hidden');
 
-    // Deactivate all segments during transition.
-    // d3.selectAll('path').on('mouseover', null);
-
-    // Transition each segment to full opacity and then reactivate it.
-    d3.selectAll('path')
-      .transition()
-      .duration(1000)
-      .style('opacity', 1)
-      .on('end', () => {
-        // d3.select(this).on('mouseover', that.mouseover);
-      });
-
-    // d3.select('#explanation').style('visibility', 'hidden');
+    // Enable this to reset the opacity. I think it looks better without it.
+    /*
+      // Transition each segment to full opacity and then reactivate it.
+      d3.selectAll('path')
+        .transition()
+        .duration(1000)
+        .style('opacity', 1)
+        .on('end', () => {
+          // d3.select(this).on('mouseover', that.mouseover);
+        });
+    */
   }
 
   private initializeBreadcrumbTrail() {
@@ -302,7 +302,7 @@ export class SunburstComponent implements OnInit {
 
     entering
       .append('svg:text')
-      .attr('x', 10) // (this.b.w + this.b.t) / 2)
+      .attr('x', 10)
       .attr('y', this.b.h / 2)
       .attr('dy', '0.35em')
       .attr('text-anchor', 'right')
@@ -312,7 +312,6 @@ export class SunburstComponent implements OnInit {
 
     // Merge enter and update selections; set position for all nodes.
     entering.merge(trail).attr('transform', (d, i) => {
-      // return 'translate(' + i * (this.b.w + this.b.s) + ', 0)';
       return 'translate(10, ' + i * (this.b.h + this.b.s) + ')';
     });
 
@@ -382,14 +381,8 @@ export class SunburstComponent implements OnInit {
     }
   }
 
-  // Take a 2-column CSV and transform it into a hierarchical structure suitable
-  // for a partition layout. The first column is a sequence of step names, from
-  // root to leaf, separated by hyphens. The second column is a count of how
-  // often that sequence occurred.
   private buildHierarchy(csv) {
     const uniqueJobs = new Set();
-    // let totalJobs = 0;
-
     const root = { name: 'root', children: [] };
 
     // tslint:disable-next-line:prefer-for-of
@@ -449,8 +442,6 @@ export class SunburstComponent implements OnInit {
       }
     }
 
-    // console.log('Found unique jobs', uniqueJobs.size);
-    // console.log('Total jobs', totalJobs);
     this.totalUniqueJobs = uniqueJobs.size;
     this.uniqueJobs = Array.from(uniqueJobs);
 

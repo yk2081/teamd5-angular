@@ -9,11 +9,13 @@ export class BackendService {
 
   private url_query = "https://869p2uscle.execute-api.us-east-1.amazonaws.com/staging";
   private url_recommend = "http://teamd5-project-env.h8caqgumtp.us-east-1.elasticbeanstalk.com/api/job/recommendation";
+  private url_jobpath = "http://teamd5-project-env.h8caqgumtp.us-east-1.elasticbeanstalk.com/api/job/path";
   private user:any = new BehaviorSubject({
     name: '',
-    major: '',
-    managed_others: '',
-    experience_in_years:0,
+    major_input: '',
+    degree_type_input: '',
+    managed_others_input: '',
+    years_exp_input:0,
     k: 50
   });
   public $user = this.user.asObservable();
@@ -27,7 +29,6 @@ export class BackendService {
   }
 
   public getUserCountByCounty(this, tablename) {
-    console.log(tablename);
     let query = JSON.stringify({
     	"text":
       `SELECT counties.state, counties.county, total, table1.countyid
@@ -48,9 +49,12 @@ export class BackendService {
   }
 
   public getRecommendations(this) {
-    let query = JSON.stringify({
-      "name": "name"
-    });
+    let query = JSON.stringify(this.user.value);
     return this.http.post(this.url_recommend, query);
+  }
+
+  public getPaths(this) {
+    let query = JSON.stringify({job_title: "SOFTWARE DEVELOPER"});
+    return this.http.post(this.url_jobpath, query);
   }
 }

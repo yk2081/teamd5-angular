@@ -7,6 +7,7 @@ import {
   OnChanges,
   ViewEncapsulation
 } from '@angular/core';
+import {BackendService} from '../services/backend.service';
 
 import * as d3 from 'd3';
 import * as randomColor from 'randomcolor';
@@ -21,8 +22,7 @@ export class SunburstComponent implements OnInit {
   @ViewChild('sunburst')
   private chartContainer: ElementRef;
 
-  @Input()
-  data: any[];
+  private data;
   margin = { top: 20, right: 20, bottom: 30, left: 40 };
   totalUniqueJobs = 0;
   uniqueJobs = null;
@@ -52,13 +52,20 @@ export class SunburstComponent implements OnInit {
   vis;
   arc;
 
-  constructor() {}
-
+  constructor(private backend: BackendService) {}
   ngOnInit() {
     this.refresh();
   }
 
   private refresh() {
+    // getting Data
+    this.backend.getPaths().toPromise().then(response => {
+      this.data = JSON.stringify(response, null, 2);
+
+    }).catch(err => {
+      console.log(err);
+    })
+
     const root = this;
 
     this.vis = d3

@@ -9,7 +9,7 @@ import {
 } from '@angular/core';
 
 import * as d3 from 'd3';
-const randomColor = require('randomColor');
+import * as randomColor from 'randomcolor';
 
 @Component({
   selector: 'app-sunburst',
@@ -26,11 +26,12 @@ export class SunburstComponent implements OnInit {
   margin = { top: 20, right: 20, bottom: 30, left: 40 };
   totalUniqueJobs = 0;
   uniqueJobs = null;
+  selectedJob = '';
 
   // Dimensions of sunburst.
   width = 750;
   height = 600;
-  radius = Math.min(this.width, this.height) / 2;
+  radius = Math.min(this.width - 100, this.height - 100) / 2;
 
   // Breadcrumb dimensions: width, height, spacing, width of tip/tail.
   b = {
@@ -105,12 +106,11 @@ export class SunburstComponent implements OnInit {
 
     // Create colors
     const colorArray = randomColor({ count: this.totalUniqueJobs, luminosity: 'dark' });
-    console.log('color ', colorArray);
-    console.log('unique', this.uniqueJobs);
+
     this.uniqueJobs.forEach((job, indx, arr) => {
-      // console.log(`job ${job} indx ${indx}`);
       that.colors[job] = colorArray[indx];
     });
+
     console.log('colors ', that.colors);
     // Basic setup of page elements.
     this.initializeBreadcrumbTrail();
@@ -159,6 +159,11 @@ export class SunburstComponent implements OnInit {
       .style('opacity', 1)
       .on('mouseover', that.mouseover.bind(that));
 
+    // this is for the initial view
+    const main: any = nodes[1].data;
+    this.selectedJob = main.name;
+    d3.select('#jobTitle').text(`${this.selectedJob}.`);
+
     // Add the mouseleave handler to the bounding circle.
     d3.select('#container').on('mouseleave', that.mouseleave.bind(that));
 
@@ -168,14 +173,14 @@ export class SunburstComponent implements OnInit {
 
   // Fade all but the current sequence, and show it in the breadcrumb trail.
   private mouseover(d) {
-    console.log('mouse over ', d.data.name);
+    console.log('mouse over ', d);
     // check if we are at the inner circle
     let percentageString = '';
     let explanationString = '';
 
     if (d.depth === 1) {
-      percentageString = '100%';
-      explanationString = ` of users started as ${d.data.name}.`;
+      explanationString = `Follow the path outward to explore how different people end up as a `;
+      d3.select('#jobTitle').text(`${d.data.name}.`);
     } else {
       const percentage = parseFloat(((100 * d.value) / this.totalSize).toPrecision(3));
       percentageString = percentage + '%';
@@ -184,16 +189,19 @@ export class SunburstComponent implements OnInit {
         percentageString = '< 0.1%';
       }
 
-      explanationString = ` of users end up as ${d.data.name}.`;
+      explanationString = ` of ${d.data.name} are ${d.depth - 1} jobs away from being a `;
+      d3.select('#jobTitle').text(`${this.selectedJob}.`);
     }
 
     d3.select('#percentage').text(percentageString);
     d3.select('#explanationText').text(explanationString);
 
+
     d3.select('#explanation').style('visibility', '');
 
     const sequenceArray = d.ancestors().reverse();
     sequenceArray.shift(); // remove root node from the array
+    // console.log('sa', sequenceArray);
     this.updateBreadcrumbs(sequenceArray, percentageString);
 
     // Fade all the segments.
@@ -211,7 +219,7 @@ export class SunburstComponent implements OnInit {
   private mouseleave(d) {
     const that = this;
     // Hide the breadcrumb trail TODO: enable this again
-    d3.select('#trail').style('visibility', 'hidden');
+    // d3.select('#trail').style('visibility', 'hidden');
 
     // Deactivate all segments during transition.
     // d3.selectAll('path').on('mouseover', null);
@@ -225,7 +233,7 @@ export class SunburstComponent implements OnInit {
         // d3.select(this).on('mouseover', that.mouseover);
       });
 
-    d3.select('#explanation').style('visibility', 'hidden');
+    // d3.select('#explanation').style('visibility', 'hidden');
   }
 
   private initializeBreadcrumbTrail() {
@@ -292,9 +300,6 @@ export class SunburstComponent implements OnInit {
       .attr('dy', '0.35em')
       .attr('text-anchor', 'right')
       .text((d: any) => {
-        if (d.data.name.length > 32) {
-          d.data.name = d.data.name.substring(0, 32).trim() + '...';
-        }
         return d.data.name;
       });
 
@@ -395,13 +400,17 @@ export class SunburstComponent implements OnInit {
 
       for (let j = 0; j < parts.length; j++) {
         const children = currentNode.children;
-        const nodeName = parts[j]
+        // Area to cleanse job titles
+        let nodeName = parts[j]
           .toLowerCase()
           .split(' ')
           .map((s) => s.charAt(0).toUpperCase() + s.substring(1))
           .join(' ');
 
         // Add in job to set
+        if (nodeName > 32) {
+          nodeName = nodeName.substring(0, 32).trim(); // to match what we put in breadcrujmbs
+        }
         uniqueJobs.add(nodeName);
 
         let childNode;

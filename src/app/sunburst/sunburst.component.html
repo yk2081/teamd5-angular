@@ -1,16 +1,18 @@
-SUNBURST
 <div class="card mt-5">
     <div class="card-header"><p class="lead">Career path explorer</p></div>
     <div class="card-body-white">
       <div *ngIf="loading" class="lds-ring"><div></div><div></div><div></div><div></div></div>
       
       <div id="chart">
-        <div id="sequence"></div>
-        <!-- <div id="legend"></div> -->
-
         <div id="explanation">
-          <p id="percentage" class="lead"></p>
-          <p id="explanationText" class="lead"></p>
+          <p>
+            <span id="percentage"></span>
+            <span id="explanationText">Follow the path outward to explore how different people end up as a </span>
+            <span id="jobTitle"></span>
+          </p>
+        </div>
+        <div id="sequence" class="">
+          <p>Job History <span>Latest to oldest</span></p>
         </div>
       </div>
 

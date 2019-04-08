@@ -21,6 +21,7 @@ export class MasterMapComponent implements OnInit {
   data: any[];
 
   private us_data:any;
+  private mode;
 
   private data_userCountByCounty$;
   private data_userCountByCounty;
@@ -32,10 +33,15 @@ export class MasterMapComponent implements OnInit {
 
   ngOnInit() {
     this.refresh("users");
+    this.mode = "users";
   }
 
-  toggleLoading() {
+  toggleLoading(mode) {
     this.loading = !this.loading;
+    if (mode === "users")
+      this.mode = "users";
+    else
+      this.mode = "jobs";
   }
 /*
   ngOnChanges(): void {
@@ -58,7 +64,7 @@ export class MasterMapComponent implements OnInit {
         root.data_userCountByCounty = values[1];
 
         root.draw_map();
-        root.toggleLoading();
+        root.toggleLoading(root.mode);
     })
   }
 
@@ -88,7 +94,11 @@ export class MasterMapComponent implements OnInit {
         if (userIndex >= 0) {
           let html = `<strong>County : </strong> <span style="color:yellow">` + root.data_userCountByCounty[userIndex].county + "</span><br/>"
           html += `<strong>State : </strong> <span style="color:yellow">` + root.data_userCountByCounty[userIndex].state + "</span><br/>"
-          html += `<strong>User Count : </strong> <span style="color:yellow">` + root.data_userCountByCounty[userIndex].total + "</span>"
+          console.log(root.mode);
+          if (root.mode == "users")
+            html += `<strong>User Count : </strong> <span style="color:yellow">` + root.data_userCountByCounty[userIndex].total + "</span>"
+          else
+            html += `<strong>Job Count : </strong> <span style="color:yellow">` + root.data_userCountByCounty[userIndex].total + "</span>"
           return html;
         }
         else {
@@ -100,13 +110,14 @@ export class MasterMapComponent implements OnInit {
 
     // calculate color threshold
     // @ts-ignore
-    let max = d3.max(this.data_userCountByCounty, function(d) { return d.total });
+    let max = d3.max(this.data_userCountByCounty, function(d) {
+      return parseInt(d.total) });
+    console.log("max : " + max);
     // @ts-ignore
     let chunkSize = Math.ceil(max / 9);
     for( var i = 0; i < this.data_userCountByCounty.length; i++) {
         this.data_userCountByCounty[i].ValueSegment = Math.floor(this.data_userCountByCounty[i].total / chunkSize);
-        if (this.data_userCountByCounty[i].ValueSegment > 8)
-            this.data_userCountByCounty[i].ValueSegment = 8;
+
     }
 
     let zDomain = [0,1,2,3,4,5,6,7,8];
@@ -114,6 +125,8 @@ export class MasterMapComponent implements OnInit {
     // @ts-ignore
         .domain(zDomain)
         .range(['#fff5eb','#fee6ce','#fdd0a2','#fdae6b','#fd8d3c','#f16913','#d94801','#a63603','#7f2704']);
+
+
 
     // Map drawing
     svg.selectAll("path")
@@ -137,6 +150,28 @@ export class MasterMapComponent implements OnInit {
         .attr("stroke", "white")
         .attr("stroke-linejoin", "round")
         .attr("d", d3.geoPath());
+
+    // Legends
+    svg.selectAll(".small-tile")
+        .data(zDomain)
+        .enter().append("rect")
+        .attr("class", "small-tile")
+        .attr("x", 900)
+        .attr("y", function(d) {
+          return d * 30 + 300; })
+        .attr("width", 40)
+        .attr("height", 30)
+        .style("fill", function(d) {
+          console.log("D : " + zScale(d));
+          return zScale(d); })
+
+    svg.selectAll(".text-thresh")
+        .data(zDomain)
+        .enter()
+        .append("text")
+        .attr("x", 950)
+        .attr("y", function(d) { return d * 30 + 310; })
+        .text(function(d) { return d * chunkSize })
   }
 
   // helper function to search by countyid
@@ -157,13 +192,13 @@ export class MasterMapComponent implements OnInit {
 
   private user() {
     console.debug('inside users');
-    this.toggleLoading();
+    this.toggleLoading("users");
     this.refresh("users");
   }
 
   private job() {
     console.debug('inside jobs');
-    this.toggleLoading();
+    this.toggleLoading("jobs");
     this.refresh("jobs");
   }
 

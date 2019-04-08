@@ -1,3 +1,8 @@
+.small-tile {
+    stroke: white;
+    stroke-width: 2px;
+}
+
 .d3-tip {
     font-size: 14px;
     line-height: 1;
@@ -63,7 +68,7 @@
       transform: rotate(360deg);
     }
   }
-  
+
 .svg-container {
     display: inline-block;
     position: relative;

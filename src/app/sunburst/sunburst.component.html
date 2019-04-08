@@ -1,22 +1,23 @@
 <div class="card mt-5">
-    <div class="card-header"><p class="lead">Career path explorer</p>
+      <div class="card-header"><p class="lead">Career path explorer</p>
+      <select data-placeholder=".NET PROGRAMMER" class="select" id="jobDropdown">
+        <option value=""></option>
+      </select>
     </div>
-    <div class="card-body-white">
-      <div *ngIf="loading" class="lds-ring"><div></div><div></div><div></div><div></div></div>
+    <div class="card-body-blue">
+      <div class="text-center">
+        <div *ngIf="loading" class="lds-ring-dark"><div></div><div></div><div></div><div></div></div>
+        <p *ngIf="loading" class="lead">One second while we load some info.</p>
+      </div>
 
       <div id="chart">
         <div id="explanation">
-          <p>
-            <span id="percentage"></span>
-            <span id="explanationText">Follow the path outward to explore how different people end up as a </span>
-            <span id="jobTitle"></span>
-          </p>
+          <p class="lead"></p>
         </div>
         <div id="sequence">
-          <p>Job History <span>Latest to oldest</span></p>
+          <p>Job History
+            <span>Latest to oldest.</span></p>
         </div>
       </div>
     </div>
 </div>
-
-{{data}}

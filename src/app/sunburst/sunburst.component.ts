@@ -7,10 +7,16 @@ import {
   OnChanges,
   ViewEncapsulation
 } from '@angular/core';
-import {BackendService} from '../services/backend.service';
 
+import {BackendService} from '../services/backend.service';
 import * as d3 from 'd3';
 import * as randomColor from 'randomcolor';
+
+declare global {
+  interface Window {
+    tail: any;
+  }
+}
 
 @Component({
   selector: 'app-sunburst',
@@ -24,11 +30,13 @@ export class SunburstComponent implements OnInit {
 
   private chartContainer: ElementRef;
   private data;
+  public loading = false;
 
   margin = { top: 20, right: 20, bottom: 30, left: 40 };
   totalUniqueJobs = 0;
   uniqueJobs = null;
-  selectedJob = '';
+  selectedJob = '.NET PROGRAMMER';
+  tailInstance = null;
 
   // Dimensions of sunburst.
   width = 750;
@@ -57,58 +65,99 @@ export class SunburstComponent implements OnInit {
   constructor(private backend: BackendService) {}
 
   ngOnInit() {
+    // get list of job titles from csv
+    this.toggleLoading();
+
+    d3.csv('assets/clean_titles.csv').then(titles => {
+      if (titles) {
+        const dropDown: any = document.getElementById('jobDropdown');
+
+        titles.forEach((job) => {
+          dropDown.options[dropDown.options.length] = new Option(job.title, job.title);
+        });
+      }
+
+      this.tailInstance = window.tail.select('.select', {
+        search: true,
+        deselect: true,
+      });
+
+      // Setup events for when it changes
+      this.tailInstance.on('change', (item, state) => {
+        if (state === 'select') {
+          this.changeJob(item.value);
+        }
+      });
+      this.toggleLoading();
+      this.refresh();
+    });
+  }
+
+  private changeJob(newJob) {
+    this.selectedJob = newJob;
     this.refresh();
   }
 
   private refresh() {
     // getting Data
-    // pass what is passed is selected.
-    this.backend.getPaths('SOFTWARE DEVELOPER').toPromise().then(response => {
-      this.data = JSON.stringify(response, null, 2);
-      console.log('api response', this.data)
+    this.toggleLoading();
+    this.backend.getPaths(this.selectedJob).toPromise().then(response => {
+      if (response) {
+        const root = this;
+        const jsonResponse = JSON.stringify(response);
+        this.data = JSON.parse(jsonResponse);
 
-    }).catch(err => {
-      console.log(err);
-    });
+        // clear out svg container
+        d3.select('.svg-container').remove();
 
-    const root = this;
+        this.vis = d3
+          .select('#chart')
+          .append('div')
+          .classed('svg-container', true)
+          .classed('mt-5', true)
+          .append('svg:svg')
+          .attr('preserveAspectRatio', 'xMinYMin meet')
+          .attr('viewBox', '0 0 1000 800')
+          .classed('svg-content-responsive', true)
+          .append('svg:g')
+          .attr('id', 'container')
+          .attr(
+            'transform',
+            'translate(' + this.width / 2 + ',' + this.height / 2 + ')'
+          );
 
-    this.vis = d3
-      .select('#chart')
-      .append('div')
-      .classed('svg-container', true)
-      .classed('mt-5', true)
-      .append('svg:svg')
-      .attr('preserveAspectRatio', 'xMinYMin meet')
-      .attr('viewBox', '0 0 1000 800')
-      .classed('svg-content-responsive', true)
-      .append('svg:g')
-      .attr('id', 'container')
-      .attr(
-        'transform',
-        'translate(' + this.width / 2 + ',' + this.height / 2 + ')'
-      );
+        this.arc = d3
+          .arc()
+          .startAngle((d: any) => {
+            return d.x0;
+          })
+          .endAngle((d: any) => {
+            return d.x1;
+          })
+          .innerRadius((d: any) => {
+            return Math.sqrt(d.y0);
+          })
+          .outerRadius((d: any) => {
+            return Math.sqrt(d.y1);
+          });
 
-    this.arc = d3
-      .arc()
-      .startAngle((d: any) => {
-        return d.x0;
-      })
-      .endAngle((d: any) => {
-        return d.x1;
-      })
-      .innerRadius((d: any) => {
-        return Math.sqrt(d.y0);
-      })
-      .outerRadius((d: any) => {
-        return Math.sqrt(d.y1);
-      });
+        // this is needed because what is passed back looks like a hash table instead of an array
+        const jobArray = [];
+        const responseLength = Object.keys(this.data).length;
 
-    d3.text('assets/customer-service.csv').then(text => {
-      const csv = d3.csvParseRows(text);
-      const json = this.buildHierarchy(csv);
-      console.log('json ', json)
-      this.createVisualization(json);
+        for (let index = 0; index < responseLength; index++) {
+          const jobLine = `${Object.keys(this.data)[index].trim().replace(/,/g, ' ' )}`; // ends here to get a line break
+          jobArray.push([jobLine, 1]);
+        }
+
+        d3.select('#sequence').style('visibility', 'hidden');
+
+        const jsonHierachy = this.buildHierarchy(jobArray);
+        this.createVisualization(jsonHierachy);
+        this.toggleLoading();
+      } else {
+        console.error('No response received');
+      }
     });
   }
 
@@ -173,7 +222,8 @@ export class SunburstComponent implements OnInit {
     // this is for the initial view
     const main: any = nodes[1].data;
     this.selectedJob = main.name;
-    d3.select('#jobTitle').text(`${this.selectedJob}.`);
+    const statusLine = `<p>Follow the path outward to explore how different people end up as a <br><b>${this.selectedJob}</b>.</p>`;
+    d3.select('#explanation').html(statusLine);
 
     // Add the mouseleave handler to the bounding circle.
     d3.select('#container').on('mouseleave', that.mouseleave.bind(that));
@@ -182,34 +232,39 @@ export class SunburstComponent implements OnInit {
     this.totalSize = path.datum().value;
   }
 
+  private toggleLoading() {
+    this.loading = !this.loading;
+
+    if (this.loading) {
+      // hide chart
+      d3.select('#chart').style('visibility', 'hidden');
+      d3.select('#sequence').style('visibility', 'hidden');
+    } else {
+      d3.select('#chart').style('visibility', 'visible');
+    }
+  }
   // Fade all but the current sequence, and show it in the breadcrumb trail.
   private mouseover(d) {
     // check if we are at the inner circle
-    d3.select('#sequence').style('visibility', 'visible');
-
     let percentageString = '';
-    let explanationString = '';
+    let statusLine = '';
 
     if (d.depth === 1) {
-      explanationString = `Follow the path outward to explore how different people end up as a `;
-      d3.select('#jobTitle').text(`${d.data.name}.`);
+      statusLine = `<p>Follow the path outward to explore how different people end up as a <br><b>${d.data.name}</b>.</p>`;
+      d3.select('#explanation').html(statusLine);
+      percentageString = '100%';
     } else {
       const percentage = parseFloat(((100 * d.value) / this.totalSize).toPrecision(3));
-      percentageString = percentage + '%';
+      percentageString = `${percentage}%`;
 
-      if (percentage < 0.1) {
-        percentageString = '< 0.1%';
-      }
-
-      explanationString = ` of ${d.data.name} are ${d.depth - 1} jobs away from being a `;
-      d3.select('#jobTitle').text(`${this.selectedJob}.`);
+      statusLine = `<p>Based on our dataset of <b>${this.uniqueJobs.length}</b> jobs, ${percentageString} of `;
+      statusLine += `<b>${d.data.name}</b> become <b>${this.selectedJob}</b> in their next ${d.depth - 1} positions.<p/>`;
     }
 
-    d3.select('#percentage').text(percentageString);
-    d3.select('#explanationText').text(explanationString);
+    d3.select('#explanation').html(statusLine);
 
-
-    d3.select('#explanation').style('visibility', '');
+    d3.select('#explanation').style('visibility', 'visable');
+    d3.select('#sequence').style('visibility', 'visible');
 
     const sequenceArray = d.ancestors().reverse();
     sequenceArray.shift(); // remove root node from the array
@@ -400,6 +455,12 @@ export class SunburstComponent implements OnInit {
 
       for (let j = 0; j < parts.length; j++) {
         const children = currentNode.children;
+
+        if (!children) {
+          // TODO: Chekc this out. Some deeper going on
+          console.log('no children hit');
+          continue;
+        }
         // Area to cleanse job titles
         let nodeName = parts[j]
           .toLowerCase()
@@ -448,3 +509,4 @@ export class SunburstComponent implements OnInit {
     return root;
   }
 }
+

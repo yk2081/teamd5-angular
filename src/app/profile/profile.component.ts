@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import {BackendService} from '../services/backend.service';
 import { Router } from '@angular/router';
+import Swal from 'sweetalert2';
 
 @Component({
   selector: 'app-profile',
@@ -53,6 +54,20 @@ export class ProfileComponent implements OnInit {
         years_exp_input:20,
         k: 50
       }
+    }
+  }
+
+  private checkProfile() {
+    this.backend.updateUser(this.user);
+    if (!this.backend.checkProfile()) {
+      Swal.fire({
+        title: 'Field Missing!',
+        text: 'Please enter all fields in User Profile page to continue',
+        type: 'error',
+        confirmButtonText: 'Cool'
+      });
+    } else {
+      this.router.navigate(["career"]);
     }
   }
 

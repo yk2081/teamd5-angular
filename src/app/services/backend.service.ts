@@ -14,13 +14,26 @@ export class BackendService {
     name: '',
     major_input: '',
     degree_type_input: '',
-    managed_others_input: '',
+    managed_others_input: 'No',
     years_exp_input: 0,
     k: 50
   });
   public $user = this.user.asObservable();
 
   constructor(private http: HttpClient) {}
+
+  public checkProfile(this) {
+    console.log(this.user._value);
+    if (
+        this.user._value.name === ""
+        || this.user._value.major_input === ""
+        || this.user._value.degree_type_input === ""
+        || this.user._value.managed_others_input === "") {
+      return false;
+    } else {
+      return true;
+    }
+  }
 
   public updateUser(user) {
     this.user.next(user);
@@ -48,7 +61,12 @@ export class BackendService {
 
   public getRecommendations(this) {
     const query = JSON.stringify(this.user.value);
-    return this.http.post(this.url_recommend, query);
+    return this.http.post(this.url_recommend, query, {
+      dataType: 'json',
+      headers: {
+        'Content-Type': 'application/json'
+      }
+    });
   }
 
   public getPaths(this, jobTitle) {

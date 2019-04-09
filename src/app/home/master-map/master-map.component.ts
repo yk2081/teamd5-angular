@@ -111,6 +111,7 @@ export class MasterMapComponent implements OnInit {
     // calculate color threshold
     // @ts-ignore
     let max = d3.max(this.data_userCountByCounty, function(d) {
+      // @ts-ignore
       return parseInt(d.total) });
     console.log("max : " + max);
     // @ts-ignore

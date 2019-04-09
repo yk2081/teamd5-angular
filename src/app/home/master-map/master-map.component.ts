@@ -92,9 +92,9 @@ export class MasterMapComponent implements OnInit {
       .html(function(d) {
         let userIndex = root.search(d.id, root.data_userCountByCounty, "countyid");
         if (userIndex >= 0) {
+          console.log(root.data_userCountByCounty[userIndex]);
           let html = `<strong>County : </strong> <span style="color:yellow">` + root.data_userCountByCounty[userIndex].county + "</span><br/>"
           html += `<strong>State : </strong> <span style="color:yellow">` + root.data_userCountByCounty[userIndex].state + "</span><br/>"
-          console.log(root.mode);
           if (root.mode == "users")
             html += `<strong>User Count : </strong> <span style="color:yellow">` + root.data_userCountByCounty[userIndex].total + "</span>"
           else
@@ -115,9 +115,27 @@ export class MasterMapComponent implements OnInit {
       return parseInt(d.total) });
     console.log("max : " + max);
     // @ts-ignore
-    let chunkSize = Math.ceil(max / 9);
-    for( var i = 0; i < this.data_userCountByCounty.length; i++) {
-        this.data_userCountByCounty[i].ValueSegment = Math.floor(this.data_userCountByCounty[i].total / chunkSize);
+    // let chunkSize = Math.ceil(max / 9);
+    // for( var i = 0; i < this.data_userCountByCounty.length; i++) {
+    //     this.data_userCountByCounty[i].ValueSegment = Math.floor(this.data_userCountByCounty[i].total / chunkSize);
+    // }
+
+    let percentages = [0.0005, 0.001, 0.002, 0.005, 0.01, 0.05, 0.1, 0.5, 1];
+    let chunkSizes = [];
+    for( let i = 0; i < percentages.length; i++) {
+      chunkSizes.push(Math.round(max * percentages[i]));
+    }
+    console.log(chunkSizes);
+    for( let i = 0; i < this.data_userCountByCounty.length; i++) {
+      if (this.data_userCountByCounty[i].total >= 0 && this.data_userCountByCounty[i] < chunkSizes[0]) this.data_userCountByCounty[i].ValueSegment = 0;
+      if (this.data_userCountByCounty[i].total >= chunkSizes[0] && this.data_userCountByCounty[i].total < chunkSizes[1]) this.data_userCountByCounty[i].ValueSegment = 1;
+      if (this.data_userCountByCounty[i].total >= chunkSizes[1] && this.data_userCountByCounty[i].total < chunkSizes[2]) this.data_userCountByCounty[i].ValueSegment = 2;
+      if (this.data_userCountByCounty[i].total >= chunkSizes[2] && this.data_userCountByCounty[i].total < chunkSizes[3]) this.data_userCountByCounty[i].ValueSegment = 3;
+      if (this.data_userCountByCounty[i].total >= chunkSizes[3] && this.data_userCountByCounty[i].total < chunkSizes[4]) this.data_userCountByCounty[i].ValueSegment = 4;
+      if (this.data_userCountByCounty[i].total >= chunkSizes[4] && this.data_userCountByCounty[i].total < chunkSizes[5]) this.data_userCountByCounty[i].ValueSegment = 5;
+      if (this.data_userCountByCounty[i].total >= chunkSizes[5] && this.data_userCountByCounty[i].total < chunkSizes[6]) this.data_userCountByCounty[i].ValueSegment = 6;
+      if (this.data_userCountByCounty[i].total >= chunkSizes[6] && this.data_userCountByCounty[i].total < chunkSizes[7]) this.data_userCountByCounty[i].ValueSegment = 7;
+      if (this.data_userCountByCounty[i].total >= chunkSizes[7] && this.data_userCountByCounty[i].total <= chunkSizes[8]) this.data_userCountByCounty[i].ValueSegment = 8;
 
     }
 
@@ -157,7 +175,7 @@ export class MasterMapComponent implements OnInit {
         .data(zDomain)
         .enter().append("rect")
         .attr("class", "small-tile")
-        .attr("x", 900)
+        .attr("x", 880)
         .attr("y", function(d) {
           return d * 30 + 300; })
         .attr("width", 40)
@@ -170,9 +188,9 @@ export class MasterMapComponent implements OnInit {
         .data(zDomain)
         .enter()
         .append("text")
-        .attr("x", 950)
-        .attr("y", function(d) { return d * 30 + 310; })
-        .text(function(d) { return d * chunkSize })
+        .attr("x", 930)
+        .attr("y", function(d) { return d * 30 + 335; })
+        .text(function(d) { return chunkSizes[d] })
   }
 
   // helper function to search by countyid

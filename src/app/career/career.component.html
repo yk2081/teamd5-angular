@@ -5,8 +5,12 @@
     </div>
     <div class="card-body">
       <h5 class="card-title" *ngIf="user.name">{{user.name}}, Major : {{user.major_input}}</h5>
-      <p class="lead text-danger" *ngIf="!user.name">We are showing some generic jobs. Go to the profile page to get custom list just for you!</p>
-
+      <p class="lead text-danger text-center" *ngIf="!user.name">We are showing some generic jobs. <br> Go to the profile page to get custom list just for you!</p>
+      
+      <div class="accordionDescription">
+        <br>
+        <span class="hint">Job title & likelihood percentage. Click title to see job description.</span>
+      </div>
       <div class="accordion">
         <div class="card" *ngFor="let result of results; let i = index">
           <div class="card-header" [id]="'heading' + i.toString()">

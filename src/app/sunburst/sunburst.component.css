@@ -121,3 +121,7 @@
     transform: rotate(360deg);
   }
 }
+
+.tail-select, .tail-select * {
+  font-size: .8rem !important;
+}

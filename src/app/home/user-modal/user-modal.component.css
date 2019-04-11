@@ -1,0 +1,16 @@
+.axis path,
+.axis line {
+    display: none;
+}
+
+.axis text {
+    font-size: 14px;
+}
+
+body {
+    font-family: sans-serif;
+}
+
+.text-total {
+    fill: red;
+}

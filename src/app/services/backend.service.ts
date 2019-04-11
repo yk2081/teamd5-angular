@@ -59,6 +59,63 @@ export class BackendService {
     return this.http.post(this.url_query, query);
   }
 
+  public getUserDegrees(this, countyid) {
+    const query = JSON.stringify({
+      text:
+      `
+      select degreetype, count(degreetype) as count
+      from users
+      where countyid = '` + countyid + `'
+      group by degreetype
+      order by degreetype
+      `,
+      values: []
+    });
+    return this.http.post(this.url_query, query);
+  }
+
+  public getUserMajors(this, countyid) {
+    const query = JSON.stringify({
+      text:
+      `
+      select major, count(major) as count
+      from users
+      where countyid = '` + countyid + `'
+      group by major
+      order by count desc, major
+      limit 10;
+      `,
+      values: []
+    });
+    return this.http.post(this.url_query, query);
+  }
+
+  public getUserAverageExperience(this, countyid) {
+    const query = JSON.stringify({
+      text:
+      `
+      select avg(totalyearsinexperience::real) as average
+      from users
+      where countyid = '` + countyid + `'
+      `,
+      values: []
+    });
+    return this.http.post(this.url_query, query);
+  }
+
+  public getUserUnemployment(this, countyid) {
+    const query = JSON.stringify({
+      text:
+      `
+      select count(id)::real / (select count(id) from users where countyid = '6037') as percentageemployeed
+      from users
+      where countyid = '` + countyid + `' and currentlyemployeed = 'No'
+      `,
+      values: []
+    });
+    return this.http.post(this.url_query, query);
+  }
+
   public getRecommendations(this) {
     const query = JSON.stringify(this.user.value);
     return this.http.post(this.url_recommend, query, {

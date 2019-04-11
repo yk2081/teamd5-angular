@@ -12,6 +12,7 @@ import { NavbarComponent } from './navbar/navbar.component';
 import { ProfileComponent } from './profile/profile.component';
 import { CareerComponent } from './career/career.component';
 import { IntroComponent } from './intro/intro.component';
+import { UserModalComponent } from './home/user-modal/user-modal.component';
 
 @NgModule({
   declarations: [
@@ -22,7 +23,8 @@ import { IntroComponent } from './intro/intro.component';
     NavbarComponent,
     ProfileComponent,
     CareerComponent,
-    IntroComponent
+    IntroComponent,
+    UserModalComponent
   ],
   imports: [
     BrowserModule,

@@ -1,0 +1,49 @@
+<!-- Modal -->
+<div class="modal fade" #userModal id="userModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-xl" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel">{{userdata?.county?.county}} County, {{userdata?.county?.state}}</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+
+
+        <div class="card-group">
+          <div class="card" style="width: 18rem;">
+            <div class="card-body">
+              <h4 class="card-title" *ngFor="let item of userdata.averageexperience">{{item.average | number}} Years</h4>
+              <p class="card-text">Average years of career experience in this county</p>
+            </div>
+          </div>
+          <div class="card" style="width: 18rem;">
+            <div class="card-body">
+              <h4 class="card-title" *ngFor="let item of userdata.unemployment">{{item.percentageemployeed | number}} %</h4>
+              <p class="card-text">Unemployment rate in this county</p>
+            </div>
+          </div>
+        </div>
+        <div class="card-group">
+          <div class="card" style="width: 18rem;">
+            <div class="card-body">
+              <h4 class="card-title">Degree Statistic</h4>
+              <svg #barchart1 id="barchart1"></svg>
+            </div>
+          </div>
+          <div class="card" style="width: 18rem;">
+            <div class="card-body">
+              <h4 class="card-title">Top 10 Majors</h4>
+              <svg #barchart2 id="barchart2"></svg>
+            </div>
+          </div>
+        </div>
+
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
+</div>

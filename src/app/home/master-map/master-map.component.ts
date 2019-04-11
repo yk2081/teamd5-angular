@@ -1,4 +1,4 @@
-import { Component, OnInit, ElementRef, ViewChild, Input, OnChanges, ViewEncapsulation } from '@angular/core';
+import { Component, OnInit, ElementRef, ViewChild, Input, OnChanges, ViewEncapsulation, ChangeDetectorRef } from '@angular/core';
 import * as d3 from 'd3';
 import * as topojson from 'topojson';
 import d3Tip from 'd3-tip';
@@ -27,7 +27,9 @@ export class MasterMapComponent implements OnInit {
   private data_userCountByCounty;
   public loading:boolean = true;
 
-  constructor(private backend: BackendService) {
+  private userdata = new Object();
+
+  constructor(private backend: BackendService, private cd: ChangeDetectorRef) {
 
   }
 
@@ -92,7 +94,6 @@ export class MasterMapComponent implements OnInit {
       .html(function(d) {
         let userIndex = root.search(d.id, root.data_userCountByCounty, "countyid");
         if (userIndex >= 0) {
-          console.log(root.data_userCountByCounty[userIndex]);
           let html = `<strong>County : </strong> <span style="color:yellow">` + root.data_userCountByCounty[userIndex].county + "</span><br/>"
           html += `<strong>State : </strong> <span style="color:yellow">` + root.data_userCountByCounty[userIndex].state + "</span><br/>"
           if (root.mode == "users")
@@ -113,7 +114,6 @@ export class MasterMapComponent implements OnInit {
     let max = d3.max(this.data_userCountByCounty, function(d) {
       // @ts-ignore
       return parseInt(d.total) });
-    console.log("max : " + max);
     // @ts-ignore
     // let chunkSize = Math.ceil(max / 9);
     // for( var i = 0; i < this.data_userCountByCounty.length; i++) {
@@ -125,7 +125,7 @@ export class MasterMapComponent implements OnInit {
     for( let i = 0; i < percentages.length; i++) {
       chunkSizes.push(Math.round(max * percentages[i]));
     }
-    console.log(chunkSizes);
+
     for( let i = 0; i < this.data_userCountByCounty.length; i++) {
       if (this.data_userCountByCounty[i].total >= 0 && this.data_userCountByCounty[i] < chunkSizes[0]) this.data_userCountByCounty[i].ValueSegment = 0;
       if (this.data_userCountByCounty[i].total >= chunkSizes[0] && this.data_userCountByCounty[i].total < chunkSizes[1]) this.data_userCountByCounty[i].ValueSegment = 1;
@@ -161,7 +161,38 @@ export class MasterMapComponent implements OnInit {
       })
       .attr("d", d3.geoPath())
       .on('mouseover', tip.show)
-      .on('mouseout', tip.hide);
+      .on('mouseout', tip.hide)
+      // @ts-ignore
+      .on('click', function(d) {
+        // @ts-ignore
+        let id = parseInt(d.id);
+        Promise.all([root.backend.getUserDegrees(id).toPromise(),
+          root.backend.getUserMajors(id).toPromise(),
+          root.backend.getUserAverageExperience(id).toPromise(),
+          root.backend.getUserUnemployment(id).toPromise()]).then(function(values) {
+          root.userdata = new Object();
+          // @ts-ignore
+          root.userdata.degrees = values[0];
+          // @ts-ignore
+          root.userdata.majors = values[1];
+          // @ts-ignore
+          root.userdata.averageexperience = values[2];
+          // @ts-ignore
+          root.userdata.unemployment = values[3];
+          // @ts-ignore
+          let userIndex = root.search(d.id, root.data_userCountByCounty, "countyid");
+          if (userIndex >= 0) {
+            // @ts-ignore
+            root.userdata.county = {
+              countyid: id,
+              county: root.data_userCountByCounty[userIndex].county,
+              state: root.data_userCountByCounty[userIndex].state,
+            }
+          }
+
+          root.cd.detectChanges();
+        })
+      });
 
     svg.append("path")
         .datum(topojson.mesh(this.us_data, this.us_data.objects.states, (a, b) => a !== b))
@@ -181,7 +212,6 @@ export class MasterMapComponent implements OnInit {
         .attr("width", 40)
         .attr("height", 30)
         .style("fill", function(d) {
-          console.log("D : " + zScale(d));
           return zScale(d); })
 
     svg.selectAll(".text-thresh")
@@ -199,11 +229,6 @@ export class MasterMapComponent implements OnInit {
       for(var i = 0; i < data.length; i ++) {
           if (parseInt(data[i][colname]) == parseInt(key)) {
               index = i;
-              if (key == 6037 || key == 6073) {
-                console.log("us.json key : " + key);
-                console.log(data[i]);
-                console.log(index);
-              }
           }
       }
       return index;

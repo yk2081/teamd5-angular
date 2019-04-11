@@ -45,7 +45,7 @@ export class SunburstComponent implements OnInit {
 
   // Breadcrumb dimensions: width, height, spacing, width of tip/tail.
   b = {
-    w: 200,
+    w: 300,
     h: 40,
     s: 3,
     t: 0
@@ -303,7 +303,7 @@ export class SunburstComponent implements OnInit {
     const trail = d3
       .select('#sequence')
       .append('svg:svg')
-      .attr('width', 200)
+      .attr('width', 300)
       .attr('height', this.width)
       .attr('id', 'trail');
 
@@ -440,6 +440,24 @@ export class SunburstComponent implements OnInit {
     const uniqueJobs = new Set();
     const root = { name: 'root', children: [] };
 
+    // sort to allow proper building of a hierachy
+    if (csv.length > 500) {
+      csv = csv.slice(0, 500);
+    }
+
+    csv = csv.sort((a, b) => {
+      // console.log(`${b[0].length} vs ${a[0].length}`);
+      if (a[0].length > b[0].length) {
+        return -1;
+      }
+
+      if (a[0].length < b[0].length) {
+        return 1;
+      }
+      // a must be equal to b
+      return 0;
+    });
+
     // tslint:disable-next-line:prefer-for-of
     for (let i = 0; i < csv.length; i++) {
       const sequence = csv[i][0];
@@ -454,12 +472,13 @@ export class SunburstComponent implements OnInit {
       let currentNode = root;
 
       for (let j = 0; j < parts.length; j++) {
-        const children = currentNode.children;
+        let children = currentNode.children;
 
         if (!children) {
           // TODO: Chekc this out. Some deeper going on
-          console.log('no children hit');
-          continue;
+          console.log(`no children hit ${i}  ${j}  ${sequence}`);
+          currentNode.children = [];
+          children = [];
         }
         // Area to cleanse job titles
         let nodeName = parts[j]

@@ -13,9 +13,9 @@ export class BackendService {
   private user:any = new BehaviorSubject({
     name: '',
     major_input: '',
-    degree_type_input: '',
+    degree_type_input: 'Bachelors',
     managed_others_input: 'No',
-    years_exp_input: 0,
+    years_exp_input: 3,
     k: 50
   });
   public $user = this.user.asObservable();

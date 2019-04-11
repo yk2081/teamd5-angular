@@ -10,8 +10,14 @@
 
 .nav-link:focus {
   font-weight: 700;
+  text-decoration: underline;
 }
 
 .nav-link:hover {
   color: #10A881 !important;
+  text-decoration: underline
+}
+
+.nav-link {
+  cursor: pointer;
 }

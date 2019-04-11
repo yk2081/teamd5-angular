@@ -1,19 +1,22 @@
 <div class="card">
-  <div class="card-header bg-primary">
-    User Profile
+  <div class="card-header">
+    <p class="lead">User Profile</p>
   </div>
   <div class="card-body">
-    <h5 class="card-title">Enter your information to plan your career.</h5>
-    <br/>
+    <div class="col-md-12 text-center">
+        <span class="hint">ℹ️ Click one of the buttons below to fill the form based with different degree types.</span>
+        <button type="button" style="margin-right:10px;" class="btn btn-secondary" (click)=sample(3)> Mathematics, MS</button>
+        <button type="button" style="margin-right:10px;" class="btn btn-secondary" (click)=sample(1)>Computer Science, BS</button>
+        <button type="button" style="margin-right:10px;" class="btn btn-secondary" (click)=sample(2)>High School</button>    
+    </div>
 
-    <button type="button" style="margin-right:10px;" class="btn btn-primary" (click)=sample(1)>Sample 1</button>
-    <button type="button" style="margin-right:10px;" class="btn btn-primary" (click)=sample(2)>Sample 2</button>
-    <button type="button" style="margin-right:10px;" class="btn btn-primary" (click)=sample(3)> Sample 3</button>
+    <hr class="shortHR">
 
-    <br/><br/>
+    <p class="lead">Enter your information below to plan your potential career paths based on degree.</p>
+
     <form>
       <div class="form-row">
-        <div class="form-group col-md-6">
+        <div class="form-group col-md-12">
           <label>Name</label>
           <input type="text" class="form-control" placeholder="Name"
             [(ngModel)]="user.name" name="name">
@@ -27,15 +30,26 @@
         </div>
         <div class="form-group col-md-6">
           <label>Degree Type</label>
-          <input type="text" class="form-control" placeholder="Degree Type"
-            [(ngModel)]="user.degree_type_input" name="degree_type_input">
+            <select
+              [(ngModel)]="user.degree_type_input"
+              name="degree_type_input"
+              class="form-control">
+              <option value="Bachelors" selected>Bachelor Degree</option>
+              <option value="Masters">Master Degree</option>
+              <option value="High School">High School Diploma</option>
+            </select>
         </div>
       </div>
       <div class="form-row">
         <div class="form-group col-md-6">
           <label>Managed Others</label>
-          <input type="text" class="form-control" placeholder="Managed Others"
-            [(ngModel)]="user.managed_others_input" name="managed_others_input">
+            <select
+              [(ngModel)]="user.managed_others_input"
+              name="managed_others_input"
+              class="form-control">
+              <option value="No">No</option>
+              <option value="Yes">Yes</option>
+            </select>
         </div>
         <div class="form-group col-md-6">
           <label>Experience in Years</label>

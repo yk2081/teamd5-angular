@@ -21,6 +21,11 @@ export class CareerComponent implements OnInit {
     this.backend.getRecommendations().toPromise().then(response => {
       let k = 50;
       for(let i = 0; k > i; i++) {
+        // cleanse Description
+        if (response[i].Description) {
+          response[i].Description = response[i].Description.replace(/\\r\\n|\\r|\\n/g, '<br>');
+        }
+
         this.results.push(response[i]);
       }
       Swal.close();

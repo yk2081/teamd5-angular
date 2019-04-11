@@ -29,16 +29,16 @@ export class ProfileComponent implements OnInit {
   private sample(id) {
     if (id == 1) {
       this.user = {
-        name: 'Test User1',
+        name: 'Liam Charlotte',
         major_input: 'Computer Science',
-        degree_type_input: "Bachelor's",
+        degree_type_input: "Bachelors",
         managed_others_input: 'Yes',
         years_exp_input:10,
         k: 50
       }
     } else if (id == 2) {
       this.user = {
-        name: 'Test User2',
+        name: 'Abigail Matthews',
         major_input: 'Accounting',
         degree_type_input: "High School",
         managed_others_input: 'No',
@@ -47,9 +47,9 @@ export class ProfileComponent implements OnInit {
       }
     } else {
       this.user = {
-        name: 'Test User3',
+        name: 'Victoria Jackson',
         major_input: 'Mathematics',
-        degree_type_input: "Master's",
+        degree_type_input: "Masters",
         managed_others_input: 'Yes',
         years_exp_input:20,
         k: 50

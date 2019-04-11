@@ -1,0 +1,15 @@
+span.hint {
+  display: block;
+  padding: 0em .5em .5em .0;
+  font-size: .8em;
+  color: gray;
+}
+
+.form-group label {
+  font-size: small;
+}
+
+hr.shortHR {
+  margin-top: 2em;
+  margin-bottom: 2em;
+}

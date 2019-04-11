@@ -1,10 +1,11 @@
 <div class="accordion" id="recommendlist">
   <div class="card">
-    <div class="card-header bg-primary">
-      Career Planning
+    <div class="card-header">
+      <p class="lead">Career Planning</p>
     </div>
     <div class="card-body">
-      <h5 class="card-title">{{user.name}}, Major : {{user.major_input}}</h5>
+      <h5 class="card-title" *ngIf="user.name">{{user.name}}, Major : {{user.major_input}}</h5>
+      <p class="lead text-danger" *ngIf="!user.name">We are showing some generic jobs. Go to the profile page to get custom list just for you!</p>
 
       <div class="accordion">
         <div class="card" *ngFor="let result of results; let i = index">
@@ -17,9 +18,7 @@
             </h2>
           </div>
           <div [id]="'collapse' + i.toString()" class="collapse" [attr.aria-labelledby]="'heading' + i.toString()" data-parent="#recommendlist">
-            <div class="card-body">
-              {{result.Description}}
-            </div>
+            <div class="card-body" innerHTML="{{result.Description}}"></div>
           </div>
 
         </div>

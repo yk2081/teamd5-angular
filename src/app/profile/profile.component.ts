@@ -31,27 +31,27 @@ export class ProfileComponent implements OnInit {
       this.user = {
         name: 'Liam Charlotte',
         major_input: 'Computer Science',
-        degree_type_input: "Bachelors",
-        managed_others_input: 'Yes',
-        years_exp_input:10,
+        degree_type_input: "Master's",
+        managed_others_input: 'No',
+        years_exp_input: 4,
         k: 50
       }
     } else if (id == 2) {
       this.user = {
         name: 'Abigail Matthews',
         major_input: 'Accounting',
-        degree_type_input: "High School",
+        degree_type_input: "Bachelor's",
         managed_others_input: 'No',
-        years_exp_input:3,
+        years_exp_input: 0,
         k: 50
       }
     } else {
       this.user = {
         name: 'Victoria Jackson',
-        major_input: 'Mathematics',
-        degree_type_input: "Masters",
-        managed_others_input: 'Yes',
-        years_exp_input:20,
+        major_input: 'Psychology',
+        degree_type_input: 'PhD',
+        managed_others_input: 'No',
+        years_exp_input: 10,
         k: 50
       }
     }

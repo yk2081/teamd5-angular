@@ -5,9 +5,9 @@
   <div class="card-body">
     <div class="col-md-12 text-center">
         <span class="hint">ℹ️ Click one of the buttons below to fill the form based with different degree types.</span>
-        <button type="button" style="margin-right:10px;" class="btn btn-secondary" (click)=sample(3)> Mathematics, MS</button>
-        <button type="button" style="margin-right:10px;" class="btn btn-secondary" (click)=sample(1)>Computer Science, BS</button>
-        <button type="button" style="margin-right:10px;" class="btn btn-secondary" (click)=sample(2)>High School</button>    
+        <button type="button" style="margin-right:10px;" class="btn btn-secondary" (click)=sample(1)> Computer Science, MS</button>
+        <button type="button" style="margin-right:10px;" class="btn btn-secondary" (click)=sample(2)>Accounting, BS</button>
+        <button type="button" style="margin-right:10px;" class="btn btn-secondary" (click)=sample(3)>Psychology, PhD</button>
     </div>
 
     <hr class="shortHR">
@@ -34,9 +34,13 @@
               [(ngModel)]="user.degree_type_input"
               name="degree_type_input"
               class="form-control">
-              <option value="Bachelors" selected>Bachelor Degree</option>
-              <option value="Masters">Master Degree</option>
-              <option value="High School">High School Diploma</option>
+              <option value="Associate's">Associate's</option>
+              <option value="Bachelor's" selected>Bachelor's</option>
+              <option value="High School">High School</option>
+              <option value="Master's">Master's</option>
+              <option value="None">None</option>
+              <option value="PhD">PhD</option>
+              <option value="Vocational">Vocational</option>
             </select>
         </div>
       </div>

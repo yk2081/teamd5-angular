@@ -26,6 +26,8 @@ export class CareerComponent implements OnInit {
           response[i].Description = response[i].Description.replace(/\\r\\n|\\r|\\n/g, '<br>');
         }
 
+        // Format percentage
+        response[i].Score = (response[i].Score * 100).toFixed(2);
         this.results.push(response[i]);
       }
       Swal.close();

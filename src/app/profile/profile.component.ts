@@ -55,6 +55,9 @@ export class ProfileComponent implements OnInit {
         k: 50
       }
     }
+
+    // check profile
+    this.checkProfile()
   }
 
   private checkProfile() {

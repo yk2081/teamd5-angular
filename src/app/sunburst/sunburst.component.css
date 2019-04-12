@@ -52,11 +52,11 @@
   fill: #fff;
 }
 
-#chart {
+#sunburstChart {
   position: relative;
 }
 
-#chart path {
+#sunburstChart path {
   stroke: #fff;
 }
 

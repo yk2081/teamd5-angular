@@ -45,7 +45,7 @@ export class SunburstComponent implements OnInit {
 
   // Breadcrumb dimensions: width, height, spacing, width of tip/tail.
   b = {
-    w: 300,
+    w: 250,
     h: 40,
     s: 3,
     t: 0
@@ -111,7 +111,7 @@ export class SunburstComponent implements OnInit {
         d3.select('.svg-container').remove();
 
         this.vis = d3
-          .select('#chart')
+          .select('#sunburstChart')
           .append('div')
           .classed('svg-container', true)
           .classed('mt-5', true)
@@ -237,10 +237,10 @@ export class SunburstComponent implements OnInit {
 
     if (this.loading) {
       // hide chart
-      d3.select('#chart').style('visibility', 'hidden');
+      d3.select('#sunburstChart').style('visibility', 'hidden');
       d3.select('#sequence').style('visibility', 'hidden');
     } else {
-      d3.select('#chart').style('visibility', 'visible');
+      d3.select('#sunburstChart').style('visibility', 'visible');
     }
   }
   // Fade all but the current sequence, and show it in the breadcrumb trail.
@@ -303,7 +303,7 @@ export class SunburstComponent implements OnInit {
     const trail = d3
       .select('#sequence')
       .append('svg:svg')
-      .attr('width', 300)
+      .attr('width', 250)
       .attr('height', this.width)
       .attr('id', 'trail');
 

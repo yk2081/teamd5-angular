@@ -167,6 +167,7 @@ export class MasterMapComponent implements OnInit {
       .on('click', function(d) {
         // @ts-ignore
         root.showLoading();
+        // @ts-ignore
         let id = parseInt(d.id);
         Promise.all([root.backend.getUserDegrees(id).toPromise(),
           root.backend.getUserMajors(id).toPromise(),

@@ -4,7 +4,7 @@ import * as topojson from 'topojson';
 import d3Tip from 'd3-tip';
 import {BackendService} from '../../services/backend.service';
 import {Observable} from 'rxjs';
-
+import Swal from 'sweetalert2';
 
 @Component({
   selector: 'app-master-map',
@@ -166,6 +166,7 @@ export class MasterMapComponent implements OnInit {
       // @ts-ignore
       .on('click', function(d) {
         // @ts-ignore
+        root.showLoading();
         let id = parseInt(d.id);
         Promise.all([root.backend.getUserDegrees(id).toPromise(),
           root.backend.getUserMajors(id).toPromise(),
@@ -199,6 +200,7 @@ export class MasterMapComponent implements OnInit {
           }
 
           root.cd.detectChanges();
+          Swal.close();
         })
       });
 
@@ -252,6 +254,39 @@ export class MasterMapComponent implements OnInit {
     console.debug('inside jobs');
     this.toggleLoading("jobs");
     this.refresh("jobs");
+  }
+
+  private showLoading(this) {
+    let timeInterval;
+    Swal.fire({
+      title: "Loading Statistics...",
+      html: "<div id='swal-timer'>0 second passed...</div><div id='swal-content'>We are calculating statistics for this county...</div>",
+      timer: 60000,
+      onBeforeOpen: () => {
+        Swal.showLoading();
+
+        timeInterval = setInterval(() => {
+          let seconds = Math.floor(((Swal.getTimerLeft() / 1000) - 60) * -1) ;
+          Swal.getContent().querySelector("#swal-timer").textContent = seconds + " seconds passed...";
+
+          if (seconds == 5)
+            Swal.getContent().querySelector("#swal-content").textContent = "There is a lot of data to process, please be patient...";
+
+          if (seconds == 10)
+            Swal.getContent().querySelector("#swal-content").textContent = "OK, it's taking more than usual but should be done soon...";
+
+          if (seconds == 20)
+            Swal.getContent().querySelector("#swal-content").textContent = "...";
+
+          if (seconds == 30)
+            Swal.getContent().querySelector("#swal-content").textContent = "I think there is something wrong...Please refresh the page";
+
+        }, 1000)
+      },
+      onClose: () => {
+        clearInterval(timeInterval);
+      }
+    })
   }
 
 }

@@ -25,6 +25,7 @@
             </div>
           </div>
         </div>
+
         <div class="card-group">
           <div class="card" style="width: 18rem;">
             <div class="card-body">
@@ -36,6 +37,25 @@
             <div class="card-body">
               <h4 class="card-title">Top 10 Majors</h4>
               <svg #barchart2 id="barchart2"></svg>
+              <p *ngFor="let item of userdata.notapplicable">
+                'Not Applicable' majors are not included in the percentage calculations, which comprises {{item.count | number}}
+                ({{item.percentage | percent}}) of all majors in this county.
+                </p>
+            </div>
+          </div>
+        </div>
+
+        <div class="card-group">
+          <div class="card" style="width: 18rem;">
+            <div class="card-body">
+              <h4 class="card-title">Top 10 Jobs Currently Held by People</h4>
+              <svg #barchart3 id="barchart3"></svg>
+            </div>
+          </div>
+          <div class="card" style="width: 18rem;">
+            <div class="card-body">
+              <h4 class="card-title">Top 10 Jobs People Are Applying To</h4>
+              <svg #barchart4 id="barchart4"></svg>
             </div>
           </div>
         </div>

@@ -63,7 +63,8 @@ export class BackendService {
     const query = JSON.stringify({
       text:
       `
-      select degreetype, count(degreetype) as count
+      select degreetype, count(degreetype) as count, count(degreetype)::real
+        / (select count(*) from users where countyid = '` + countyid + `') as percentage
       from users
       where countyid = '` + countyid + `'
       group by degreetype
@@ -78,9 +79,27 @@ export class BackendService {
     const query = JSON.stringify({
       text:
       `
-      select major, count(major) as count
+      select major, count(major) as count, count(major)::real
+        / (select count(*) from users where countyid = '` + countyid + `' and major <> 'NOT APPLICABLE') as percentage
       from users
-      where countyid = '` + countyid + `'
+      where countyid = '` + countyid + `' and major <> 'NOT APPLICABLE'
+      group by major
+      order by count desc, major
+      limit 10;
+      `,
+      values: []
+    });
+    return this.http.post(this.url_query, query);
+  }
+
+  public getUserMajorsNotApplicable(this, countyid) {
+    const query = JSON.stringify({
+      text:
+      `
+      select major, count(major) as count, count(major)::real
+        / (select count(*) from users where countyid = '` + countyid + `') as percentage
+      from users
+      where countyid = '` + countyid + `' and major = 'NOT APPLICABLE'
       group by major
       order by count desc, major
       limit 10;
@@ -110,6 +129,46 @@ export class BackendService {
       select count(id)::real / (select count(id) from users where countyid = '6037') as percentageemployeed
       from users
       where countyid = '` + countyid + `' and currentlyemployeed = 'No'
+      `,
+      values: []
+    });
+    return this.http.post(this.url_query, query);
+  }
+
+  public getCurrentJobs(this, countyid) {
+    const query = JSON.stringify({
+      text:
+      `
+      select title, count(title) as count, count(title)::real / (select count(*) from users where countyid = '` + countyid + `' and title <> 'UNKNOWN') as percentage
+      from users
+      left join
+      	(select j.userid, j.title
+      	from (
+      	   select userid, min(sequence) as minsequence
+      	   from jobhistories group by userid
+      	) as x inner join jobhistories as j on j.userid = x.userid and j.sequence = x.minsequence) as temptable
+      on temptable.userid = users.id
+      where users.countyid = '` + countyid + `' and title <> 'UNKNOWN'
+      group by title
+      order by count desc
+      limit 10;
+      `,
+      values: []
+    });
+    return this.http.post(this.url_query, query);
+  }
+
+  public getFutureJobs(this, countyid) {
+    const query = JSON.stringify({
+      text:
+      `
+      select title, count(title) as count, count(title)::real / (select count(*) from users where countyid = '` + countyid + `') as percentage
+      from users
+      left join applications on applications.userid = users.id
+      where countyid = '` + countyid + `'
+      group by title
+      order by count desc
+      limit 10;
       `,
       values: []
     });

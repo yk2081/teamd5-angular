@@ -27,7 +27,7 @@ export class MasterMapComponent implements OnInit {
   private data_userCountByCounty;
   public loading:boolean = true;
 
-  private userdata = new Object();
+  private userdata:any = new Object();
 
   constructor(private backend: BackendService, private cd: ChangeDetectorRef) {
 
@@ -100,6 +100,7 @@ export class MasterMapComponent implements OnInit {
             html += `<strong>User Count : </strong> <span style="color:yellow">` + root.data_userCountByCounty[userIndex].total + "</span>"
           else
             html += `<strong>Job Count : </strong> <span style="color:yellow">` + root.data_userCountByCounty[userIndex].total + "</span>"
+          html += '<br/><br/>Click on the map to view details'
           return html;
         }
         else {
@@ -169,7 +170,11 @@ export class MasterMapComponent implements OnInit {
         Promise.all([root.backend.getUserDegrees(id).toPromise(),
           root.backend.getUserMajors(id).toPromise(),
           root.backend.getUserAverageExperience(id).toPromise(),
-          root.backend.getUserUnemployment(id).toPromise()]).then(function(values) {
+          root.backend.getUserUnemployment(id).toPromise(),
+          root.backend.getUserMajorsNotApplicable(id).toPromise(),
+          root.backend.getCurrentJobs(id).toPromise(),
+          root.backend.getFutureJobs(id).toPromise(),
+          ]).then(function(values) {
           root.userdata = new Object();
           // @ts-ignore
           root.userdata.degrees = values[0];
@@ -179,6 +184,9 @@ export class MasterMapComponent implements OnInit {
           root.userdata.averageexperience = values[2];
           // @ts-ignore
           root.userdata.unemployment = values[3];
+          root.userdata.notapplicable = values[4];
+          root.userdata.currentjobs = values[5];
+          root.userdata.futurejobs = values[6];
           // @ts-ignore
           let userIndex = root.search(d.id, root.data_userCountByCounty, "countyid");
           if (userIndex >= 0) {

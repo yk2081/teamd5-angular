@@ -14,9 +14,14 @@ export class UserModalComponent implements OnChanges {
   private barchart1: ElementRef;
   @ViewChild('barchart2')
   private barchart2: ElementRef;
+  @ViewChild('barchart3')
+  private barchart3: ElementRef;
+  @ViewChild('barchart4')
+  private barchart4: ElementRef;
 
   @Input() userdata;
 
+  private notapplicable = {};
   constructor() { }
 
   ngOnInit() {
@@ -27,6 +32,8 @@ export class UserModalComponent implements OnChanges {
       $('#userModal').modal('show');
       this.drawBar(this.userdata.degrees, this.barchart1.nativeElement,'degreetype');
       this.drawBar(this.userdata.majors, this.barchart2.nativeElement,'major');
+      this.drawBar(this.userdata.currentjobs, this.barchart3.nativeElement,'title');
+      this.drawBar(this.userdata.futurejobs, this.barchart4.nativeElement,'title');
     }
   }
 
@@ -38,14 +45,13 @@ export class UserModalComponent implements OnChanges {
 
     let gap = 50;
     let padding = 100;
-    let w = 420;
-    let h = 500;
+    let w = 500;
+    let h = 600;
 
     svg.attr("width", w)
     .attr("height", h)
     .attr("transform", "translate(" + 0 + ",-60)")
 
-     console.log(data);
     let xScale = d3.scaleLinear()
      .domain([0, d3.max(data, function(d:any) {
        return parseInt(d.count); })])
@@ -87,7 +93,8 @@ export class UserModalComponent implements OnChanges {
     .attr("class", "text-total")
     .attr("x", (380))
     .attr("y", function(d, i) { return gap * i + padding + 13; })
-    .text(function(d:any) { return (parseInt(d.count)).toLocaleString(); })
+    .text(function(d:any) {
+      return (parseInt(d.count)).toLocaleString() + " (" + parseFloat(d.percentage).toLocaleString("en", {style: "percent"}) + ")" })
   }
 
   private getUnique(data, colname) {

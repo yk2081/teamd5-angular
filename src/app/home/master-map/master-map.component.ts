@@ -100,7 +100,7 @@ export class MasterMapComponent implements OnInit {
             html += `<strong>User Count : </strong> <span style="color:yellow">` + root.data_userCountByCounty[userIndex].total + "</span>"
           else
             html += `<strong>Job Count : </strong> <span style="color:yellow">` + root.data_userCountByCounty[userIndex].total + "</span>"
-          html += '<br/><br/>Click on the map to view details'
+          html += '<br/><br/>Click on a county for more info'
           return html;
         }
         else {

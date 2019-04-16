@@ -42,7 +42,7 @@ export class ProfileComponent implements OnInit {
         major_input: 'Accounting',
         degree_type_input: "Bachelor's",
         managed_others_input: 'No',
-        years_exp_input: 0,
+        years_exp_input: 3,
         k: 50
       }
     } else {

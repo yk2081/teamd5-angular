@@ -12,13 +12,13 @@
 
 
         <div class="card-group">
-          <div class="card" style="width: 18rem;">
+          <div class="card">
             <div class="card-body">
               <h4 class="card-title" *ngFor="let item of userdata.averageexperience">{{item.average | number}} Years</h4>
               <p class="card-text">Average years of career experience in this county</p>
             </div>
           </div>
-          <div class="card" style="width: 18rem;">
+          <div class="card">
             <div class="card-body">
               <h4 class="card-title" *ngFor="let item of userdata.unemployment">{{item.percentageemployeed | number}} %</h4>
               <p class="card-text">Unemployment rate in this county</p>
@@ -27,32 +27,32 @@
         </div>
 
         <div class="card-group">
-          <div class="card" style="width: 18rem;">
+          <div class="card">
             <div class="card-body">
               <h4 class="card-title">Degree Statistic</h4>
               <svg #barchart1 id="barchart1"></svg>
             </div>
           </div>
-          <div class="card" style="width: 18rem;">
+          <div class="card">
             <div class="card-body">
               <h4 class="card-title">Top 10 Majors</h4>
               <svg #barchart2 id="barchart2"></svg>
-              <p *ngFor="let item of userdata.notapplicable">
+              <span *ngFor="let item of userdata.notapplicable" class="subtle">
                 'Not Applicable' majors are not included in the percentage calculations, which comprises {{item.count | number}}
                 ({{item.percentage | percent}}) of all majors in this county.
-                </p>
+              </span>
             </div>
           </div>
         </div>
 
         <div class="card-group">
-          <div class="card" style="width: 18rem;">
+          <div class="card">
             <div class="card-body">
               <h4 class="card-title">Top 10 Jobs Currently Held by People</h4>
               <svg #barchart3 id="barchart3"></svg>
             </div>
           </div>
-          <div class="card" style="width: 18rem;">
+          <div class="card">
             <div class="card-body">
               <h4 class="card-title">Top 10 Jobs People Are Applying To</h4>
               <svg #barchart4 id="barchart4"></svg>

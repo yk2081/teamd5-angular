@@ -12,5 +12,34 @@ body {
 }
 
 .text-total {
-    fill: red;
+    fill: darkslategray;
+    font-size: 0.9em;
+}
+
+@media (min-width: 576px) {
+    .modal-dialog {
+        max-width: 90%;
+    }
+}
+
+@media (max-width: 1024px) {
+    .text-total {
+        fill: darkslategray;
+        font-size: 0.75em;
+    }
+}
+
+.card-title {
+    margin-bottom: .75rem;
+    font-size: 1.2rem;
+    font-weight: 700;
+}
+
+.card-text {
+    font-size: .90em;
+}
+
+.subtle {
+    font-size: .75em;
+    font-weight: 300;
 }

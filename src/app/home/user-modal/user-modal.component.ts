@@ -42,24 +42,35 @@ export class UserModalComponent implements OnChanges {
     let element = svgelement;
     let svg = d3.select(element);
     svg.html("");
-
-    let gap = 50;
+    
+    let w = (window.innerWidth / 2);
+    let cardW = Math.trunc(w - (window.innerWidth / 7));
+    let h = 520; // account for 10 top at ~50px each
     let padding = 100;
-    let w = 500;
-    let h = 600;
+    let gap = 50;
 
     svg.attr("width", w)
     .attr("height", h)
     .attr("transform", "translate(" + 0 + ",-60)")
 
+    let dMax = d3.max(data, function(d: any) {
+      return parseInt(d.count);
+    });
+    
+    // console.log('dMax', dMax);
+    // console.log('cardW', cardW);
     let xScale = d3.scaleLinear()
-     .domain([0, d3.max(data, function(d:any) {
-       return parseInt(d.count); })])
-     .range([0, 350]);
+     .domain([0, dMax])
+     .range([0, cardW - 40]); // minus 40 to allow text to look good
 
 
     // Y Axis
     let yDomain = this.getUnique(data, column);
+
+    if (!yDomain) {
+      console.log('No values found. Returning ')
+      return
+    }
     let yRange = this.getRange(yDomain, gap, padding);
     let yScale = d3.scaleOrdinal()
      .domain(yDomain)
@@ -73,6 +84,8 @@ export class UserModalComponent implements OnChanges {
      .call(
        // @ts-ignore
        d3.axisLeft(yScale));
+    
+    var widestBar = 0;
 
     // Bars
     svg.selectAll(".bar")
@@ -80,10 +93,17 @@ export class UserModalComponent implements OnChanges {
      .enter().append("rect")
      .attr("class", "bar")
      //.attr("id", function(d) { return d.country; })
-     .attr("x", 20)
-     .attr("y", function(d, i) { return gap * i + padding; })
+     .attr("x", 10)
+     .attr("y", function(d, i) { return gap * i + padding - 10; })
      .attr("width", function(d:any) {
-       return xScale(parseInt(d.count)); })
+       // console.log('d value', d.count);
+       let w = xScale(Math.trunc(d.count));
+
+       if (w > widestBar) {
+         widestBar = w;
+       }
+       // console.log('w assigned ->', w);
+       return w; })
      .attr("height", 15)
      .attr("fill", "steelblue")
 
@@ -91,13 +111,16 @@ export class UserModalComponent implements OnChanges {
     .data(data)
     .enter().append("text")
     .attr("class", "text-total")
-    .attr("x", (380))
-    .attr("y", function(d, i) { return gap * i + padding + 13; })
+    .attr("x", (widestBar + 25))
+    .attr("y", function(d, i) { return gap * i + padding; })
     .text(function(d:any) {
       return (parseInt(d.count)).toLocaleString() + " (" + parseFloat(d.percentage).toLocaleString("en", {style: "percent"}) + ")" })
   }
 
   private getUnique(data, colname) {
+      if (!data) {
+        return [];
+      }
       var values = [];
       data.forEach(function(d, i) {
           if (i == 0) {

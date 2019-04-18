@@ -139,7 +139,7 @@ export class BackendService {
     const query = JSON.stringify({
       text:
       `
-      select title, count(title) as count, count(title)::real / (select count(*) from users where countyid = '` + countyid + `' and title <> 'UNKNOWN') as percentage
+      select title::varchar(25), count(title) as count, count(title)::real / (select count(*) from users where countyid = '` + countyid + `' and title <> 'UNKNOWN') as percentage
       from users
       left join
       	(select j.userid, j.title
@@ -162,7 +162,7 @@ export class BackendService {
     const query = JSON.stringify({
       text:
       `
-      select title, count(title) as count, count(title)::real / (select count(*) from users where countyid = '` + countyid + `') as percentage
+      select title::varchar(25), count(title) as count, count(title)::real / (select count(*) from users where countyid = '` + countyid + `') as percentage
       from users
       left join applications on applications.userid = users.id
       where countyid = '` + countyid + `'

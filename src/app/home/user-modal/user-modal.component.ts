@@ -42,7 +42,7 @@ export class UserModalComponent implements OnChanges {
     let element = svgelement;
     let svg = d3.select(element);
     svg.html("");
-    
+
     let w = (window.innerWidth / 2);
     let cardW = Math.trunc(w - (window.innerWidth / 7));
     let h = 520; // account for 10 top at ~50px each
@@ -56,7 +56,7 @@ export class UserModalComponent implements OnChanges {
     let dMax = d3.max(data, function(d: any) {
       return parseInt(d.count);
     });
-    
+
     // console.log('dMax', dMax);
     // console.log('cardW', cardW);
     let xScale = d3.scaleLinear()
@@ -84,7 +84,7 @@ export class UserModalComponent implements OnChanges {
      .call(
        // @ts-ignore
        d3.axisLeft(yScale));
-    
+
     var widestBar = 0;
 
     // Bars
@@ -118,6 +118,7 @@ export class UserModalComponent implements OnChanges {
   }
 
   private getUnique(data, colname) {
+    console.log(data)
       if (!data) {
         return [];
       }

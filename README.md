@@ -14,7 +14,7 @@ This project was generated with [Angular CLI](https://github.com/angular/angular
 
 To use Angular CLI, you will need node.js installed. Visit the [node site](https://nodejs.org/en/) to download the executable. Running through the wizard.
 
-From the command prompt. Download the project.
+From the command prompt. Clone the project.
 ```
 git clone https://github.com/yk2081/teamd5-angular.git’
 ```
@@ -31,6 +31,7 @@ ng serve
 ```
 
 Now you are ready to go! Visit http://localhost:4200
+
 As you edit the files, the website will reload automatically.
 
 Below are some tips on how to work with the project.
@@ -43,12 +44,15 @@ Run `ng generate component component-name` to generate a new component. You can 
 ```
 
 **Build for production**
+
 Run `ng build` to build the project. The build artifacts will be stored in the `dist/` directory. Use the `--prod` flag for a production build.
 
 **Running unit tests**
+
 Run `ng test` to execute the unit tests via [Karma](https://karma-runner.github.io).
 
 **Running end-to-end tests**
+
 Run `ng e2e` to execute the end-to-end tests via [Protractor](http://www.protractortest.org/).
 
 ## Further help

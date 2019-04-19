@@ -19,7 +19,7 @@ From the command prompt. Clone the project.
 git clone https://github.com/yk2081/teamd5-angular.git’
 ```
 
-Install the dependancies.
+Install the dependencies.
 ```
 npm install
 ```

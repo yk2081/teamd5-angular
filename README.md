@@ -70,3 +70,4 @@ Big thanks to members of team D5 for their contributions to the Career Oracle pr
 * James Ching
 * Gil Ferreira
 * Jianglu Zhang
+* Si Khoa Lieng

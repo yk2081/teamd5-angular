@@ -2,6 +2,8 @@
 
 This is the frontend code that powers our online career exploration tool: [Career Oracle](http://teamd5.s3-website-us-east-1.amazonaws.com)
 
+![Demo](https://github.com/sikhoalieng/job-recommendation-engine/blob/master/img/CareerOracle_demo.gif)
+
 ## Getting Started
 
 ### Prerequisites
